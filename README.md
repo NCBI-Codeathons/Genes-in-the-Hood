@@ -4,6 +4,7 @@ NCBI Datasets Codeathon Team 3
 ## The Team
 - Team Member 1
 - Team Member 2
+- Vinita Joardar
 
 ## The Project
 
