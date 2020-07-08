@@ -6,7 +6,7 @@ NCBI Datasets Codeathon Team 3
 - Peter Meric
 - Jianli Dai
 - Greg Schuler
-- ...
+- Wayne Matten
 
 
 ## The Project
