@@ -2,12 +2,11 @@
 NCBI Datasets Codeathon Team 3
 
 ## The Team
-- Team Member 1
-- Team Member 2
 - Vinita Joardar
 - Peter Meric
 - Jianli Dai
 - Greg Schuler
+- ...
 
 
 ## The Project
