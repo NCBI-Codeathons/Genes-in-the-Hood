@@ -15,8 +15,10 @@ NCBI Datasets Codeathon Team 3
 
 ### (A) Retrieve g-proteobacteria assemblies
 (i)  retrieve assemblies with GFF, genomic and protein sequences
+
 (ii) find cas9 genes and the gene neighborhood (10kB upstream/downstream)
-((iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
+
+(iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
 ### (B) Use cas9 protein sequence to look for similar proteins but without the cas9 symbol
