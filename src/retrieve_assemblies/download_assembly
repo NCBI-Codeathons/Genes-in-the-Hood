@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 ACC=${1-foo}
-TARGET_DIR=/usr/local/data/assemblies
+TARGET_DIR=${2-/usr/local/data/assemblies}
 FNAME=${TARGET_DIR}/${ACC}.zip
 
 if [[ ! -s ${FNAME} ]]
