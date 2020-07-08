@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+ACC=${1-foo}
+TARGET_DIR=/usr/local/data/assemblies
+FNAME=${TARGET_DIR}/${ACC}.zip
+
+if [[ ! -s ${FNAME} ]]
+then
+    datasets download assembly ${ACC} --filename "${FNAME}" --include-seq --include-protein --include-gff3
+fi
+
