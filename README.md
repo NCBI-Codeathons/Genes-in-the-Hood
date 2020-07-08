@@ -2,12 +2,11 @@
 NCBI Datasets Codeathon Team 3
 
 ## The Team
-- Team Member 1
-- Team Member 2
 - Vinita Joardar
 - Peter Meric
 - Jianli Dai
 - Greg Schuler
+- ...
 
 
 ## The Project
@@ -22,21 +21,24 @@ NCBI Datasets Codeathon Team 3
 
 
 ### (B) Use cas9 protein sequence to look for similar proteins but without the cas9 symbol
-(i) create a BLAST db of cas9 proteins
-  * using downloaded protein.faa, extract proteins ascribed as "cas9"
+* build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
 
-(ii) blastp all proteins from "without cas9" assemblies in g-proteobacteria against the cas9 BLAST db &mdash; to find unannotated cas9-like proteins
-  * select a representative set of cas9 protein sequences -- to build a query set
+* extract cas9 protein sequences into a single `cas9.faa`
 
-(iii) build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
-  * execute tblastn with the cas9 protein query set
+* retrieve TIGRFAM profiles, build BLAST profile db
 
-(iv) build protein blast database with a proteins from assemblies in g-proteobacteria
-  * execute blastp with the cas9 query set
+* execute rpstblastn with the genomic g-proteobacteria sequences
 
-(v) create a protein profile for known cas9 proteins, use hmmer?
+
+maybe...
+
+* build a cas9 protein query set &mdash; a subset of `cas9.faa`
+
+* execute tblastn with the `cas9_filtered.faa` protein query set
+
+* create a protein profile for known cas9 proteins, use hmmer?
   * domain-based search using rpsblast
-    ** look into use of tigrfam as input to makeprofiledb
+    * look into use of tigrfam as input to makeprofiledb
 
 
 ### (C) Neighborhood analysis
@@ -48,4 +50,6 @@ NCBI Datasets Codeathon Team 3
 ## Work Plan 
 * retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
 * extract cas9 (WP) sequences from protein.faa -- single fasta
-* for B.iii, generate 
+* extract list of WP accessions
+* retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM)
+* hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
