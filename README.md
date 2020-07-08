@@ -38,6 +38,12 @@ iii. build nucleotide blast database with genomic sequences from assemblies in g
   ** look into use of tigrfam as input to makeprofiledb
 
 
+### (C) Neightbohood analysis
+- for genes upstream / downstream of Cas9 (from A ii), are there any patterns?
+- Other Cas-related genes?
+- For non Cas genes, characterize:  domain structure, GO terms?
+
+
 ## Work Plan 
 * retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
 * extract cas9 (WP) sequences from protein.faa -- single fasta
