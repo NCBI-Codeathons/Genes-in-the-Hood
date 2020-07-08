@@ -26,9 +26,14 @@ NCBI Datasets Codeathon Team 3
 
 * extract cas9 protein sequences into a single `cas9.faa`
 
+* retrieve TIGRFAM profiles, build BLAST profile db
+
+* execute rpstblastn with the genomic g-proteobacteria sequences
+
+
+maybe...
+
 * build a cas9 protein query set &mdash; a subset of `cas9.faa`
-  * use tigrfam 
-https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM
 
 * execute tblastn with the `cas9_filtered.faa` protein query set
 
@@ -48,3 +53,4 @@ https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM
 * extract cas9 (WP) sequences from protein.faa -- single fasta
 * extract list of WP accessions
 * retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM)
+* hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
