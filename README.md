@@ -56,7 +56,7 @@ NCBI Datasets Codeathon Team 3
   * choose a handful of assemblies -- random selection: GCF_011754595.1 GCF_902706585.1 GCF_011683955.1 GCF_009811535.1 GCF_000948985.1 GCF_002215215.1 GCF_010592905.1
   * build a BLAST genomic nucleotide db -- done
   * extract associated cas9 protein.faa (to `cas9.faa`) -- Ray
-  * for each protein accession in `cas9.faa`
+  * for each protein accession in `cas9.faa`, download HMM profiles (done)
     * find associated HMM ids, and download the HMM profiles
     * determine NCBI ftp URL for HMM profile
     * download the HMM profiles
