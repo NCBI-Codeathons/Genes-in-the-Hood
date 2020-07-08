@@ -42,7 +42,7 @@ maybe...
     * look into use of tigrfam as input to makeprofiledb
 
 
-### (C) Neightbohood analysis
+### (C) Neighborhood analysis
 - for genes upstream / downstream of Cas9 (from A ii), are there any patterns?
 - Other Cas-related genes?
 - For non Cas genes, characterize:  domain structure, GO terms?
