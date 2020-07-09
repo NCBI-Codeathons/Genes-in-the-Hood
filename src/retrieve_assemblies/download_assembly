@@ -10,7 +10,7 @@ if [[ $CHECK_ZIPS -eq 1 ]]
 then
     if [[ -s ${FNAME} ]]
     then
-        unzip -q -t ${FNAME}
+        unzip -qq -t ${FNAME}
         if (( $? ))
         then
             rm -f ${FNAME}
