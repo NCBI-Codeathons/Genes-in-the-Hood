@@ -111,5 +111,41 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
 
-* neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
+### Identifying unannotated Cas9 
+
+Methods evaluated on test set:
+
+* rpstblastn
+
+* tblastn
+
+* ORFfinder/rpsblast
+
+* ORFfinder/hmm-search - fastest 
+
+
+      combined 3 HMM profiles into 1 file so we can search multiple profiles in one pass
+   
+      in `/usr/local/data/testset-1`
+   
+`cat *.HMM > TIGR0_combined.HMM`
+
+`hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
+
+      input files:
+   
+      TIGR0_combined.HMM --the profile
+   
+      orf.10.test.out --the orf generated from orf-finder
+   
+      output file:
+   
+      orf.10_TIGR0_com_HMMsearch tabulated hmmsearch output
+   
+It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
+
+### Neighborhood analysis
+
+* Cas proteins present - Cas1, Cas2, Cas4
+
 

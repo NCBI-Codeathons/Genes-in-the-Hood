@@ -1,2 +1,2 @@
-gffutils~=0.10
-ncbi-datasets-pylib
+ncbi-datasets-pylib ~= 3.60
+gffutils ~= 0.10
