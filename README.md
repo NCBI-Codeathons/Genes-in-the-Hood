@@ -104,8 +104,8 @@ Initial classification is as follows.
 
 | category            | genomes |
 |---------------------|---------|
-| has cas9 gene       |418     |
-| has cas9 pseudogene |    251    |
-| no cas9 annotated   | 79,057 |
-| missing genomic.gff |     76 |
+| has cas9 gene       |     418 |
+| has cas9 pseudogene |     251 |
+| no cas9 annotated   |  79,057 |
+| missing genomic.gff |      76 |
 
