@@ -124,7 +124,7 @@ Methods evaluated on test set:
 * ORFfinder/hmm-search - fastest 
 
 
-combined 3 HMM profiles into 1 file so we can search multiple profiles in one pass
+combined 3 HMM profiles into one file so we can search multiple profiles in one pass
    
 in `/usr/local/data/testset-1`
    
