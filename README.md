@@ -101,7 +101,7 @@ The NCBI Datasets command-line tool was used to download all available reference
 
 An initial classification of these datasets involved scanning the genomic.gff file for the presence or absence of "cas9", annotated either as a gene or a pseudogene.
 
-| category            | genomes |
+| category            | assemblies |
 |---------------------|---------|
 | has cas9 gene       |     418 |
 | has cas9 pseudogene |     251 |
