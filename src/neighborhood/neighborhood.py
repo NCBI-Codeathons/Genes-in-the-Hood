@@ -28,22 +28,25 @@ class ThisApp:
 
     def run(self):
         zip_files = self.get_zip_files(self.args.input_path)
-        self.process_zip_files(zip_files)
+        accessions = self.get_desired_accessions()
+        self.process_zip_files(zip_files, accessions)
 
     def get_zip_files(self, path):
         all_zip_files = []
         for root, dirs, files in os.walk(path):
             all_zip_files += [os.path.join(root, x) for x in files if x.endswith('.zip')]
+        return all_zip_files
+
+    def get_desired_accessions(self):
+        desired = []
         if self.args.accession:
             desired = [self.args.accession]
         elif self.args.accession_file:
             with open(self.args.accession_file, 'r') as fin:
                 desired = fin.read().split('\n')
-        else:
-            return all_zip_files
-        return [x for x in desired if x in all_zip_files]
+        return desired
 
-    def process_zip_files(self, zip_files):
+    def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
         window = self.args.window
