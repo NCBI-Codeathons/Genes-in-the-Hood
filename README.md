@@ -96,31 +96,6 @@ For the 76 cases in which the downloaded package did not contain a genomic.gff f
 
 In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.   
 
-
-
-
-## Work Plan 
-* experiment: testset-1
-  for B, create a small test dataset to test i and ii. small number of assemblies and a selected set of cas9 proteins with associated hmms
-  * choose a handful of assemblies -- random selection: GCF_011754595.1 GCF_902706585.1 GCF_011683955.1 GCF_009811535.1 GCF_000948985.1 GCF_002215215.1 GCF_010592905.1
-  * build a BLAST genomic nucleotide db -- done
-  * extract associated cas9 protein.faa (to `cas9.faa`) -- Ray
-  * for each protein accession in `cas9.faa`, download HMM profiles (done)
-    * find associated HMM ids, and download the HMM profiles
-    * determine NCBI ftp URL for HMM profile
-    * download the HMM profiles
-  * for each protein and hmm pair, run `rpstblastn` (B.i) and `tblastn` (B.ii) (testing done - for single assembly in B.i; test_cas9.aa input for B.ii)
-
-* retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
-
-* extract cas9 (WP) sequences from protein.faa -- single fasta 
-
-* extract list of WP accessions
-
-* retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) (done)
-
-* hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
-      
 ### Identifying unannotated Cas9 
 
 Methods evaluated on test set:
@@ -153,4 +128,30 @@ in `/usr/local/data/testset-1`
       orf.10_TIGR0_com_HMMsearch --the tabulated hmmsearch output
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
+
+
+
+
+## Work Plan 
+* experiment: testset-1
+  for B, create a small test dataset to test i and ii. small number of assemblies and a selected set of cas9 proteins with associated hmms
+  * choose a handful of assemblies -- random selection: GCF_011754595.1 GCF_902706585.1 GCF_011683955.1 GCF_009811535.1 GCF_000948985.1 GCF_002215215.1 GCF_010592905.1
+  * build a BLAST genomic nucleotide db -- done
+  * extract associated cas9 protein.faa (to `cas9.faa`) -- Ray
+  * for each protein accession in `cas9.faa`, download HMM profiles (done)
+    * find associated HMM ids, and download the HMM profiles
+    * determine NCBI ftp URL for HMM profile
+    * download the HMM profiles
+  * for each protein and hmm pair, run `rpstblastn` (B.i) and `tblastn` (B.ii) (testing done - for single assembly in B.i; test_cas9.aa input for B.ii)
+
+* retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
+
+* extract cas9 (WP) sequences from protein.faa -- single fasta 
+
+* extract list of WP accessions
+
+* retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) (done)
+
+* hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
+      
 
