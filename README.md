@@ -9,17 +9,17 @@ Bacteriophages (phages) are viruses that infect bacteria. There are multiple ant
 - CRISPR (**C**lustered **R**egularly **I**nterspaced **S**hort **P**alindromic **R**epeats)
 
    This is a specialized region of the bacterial genome that contains repeats and spacers. The spacers consist of virus sequences from previous phage infections that are used to recognize future attacks 
-- Cas (**C**RISPR **ass**ociated) proteins  
+- Cas (**C**RISPR-**as**sociated) proteins  
 
    Cas proteins use CRISPR sequences as guides to recognize and cleave specific strands of virus DNA. Cas9 is an endonuclease (cleaves internal bonds in DNA) that causes site-directed double-stranded breaks.    
 
 The CRISPR-Cas9 system also has applications in basic research, and in biotechnology, including genome editing for treatment of genetic disorders.  
 
 ## Hypothetical user story 
-A research group would like to identify Cas9 and Cas9-like proteins in gammaproteobacterial genomes, and download genes in the neighborhood of Cas9. They start their search with the gene symbol “Cas9” with the goal of finding and downloading
-- protein FASTA files for annotated Cas9 proteins (e.g., WP_ proteins in RefSeq) in gammaproteobacteria (taxonomic rank = Class; txid 1236; NCBI BLAST name: g-proteobacteria)
-- protein FASTA files for unannotated Cas9-like proteins (similar proteins without symbols or informative names)
-- protein FASTA for genes in the neighborhood of Cas9 (10kb on each side)
+A research group would like to identify Cas9 and Cas9-like proteins in gammaproteobacterial genomes, and download genes in the neighborhood of Cas9. They start their search with the gene symbol “cas9” with the goal of finding and downloading
+- protein FASTA files for annotated cas9 genes (e.g., WP_ proteins in RefSeq) in gammaproteobacteria (taxonomic rank = Class; txid 1236; NCBI BLAST name: g-proteobacteria)
+- protein FASTA files for unannotated cas9-like proteins (similar proteins without symbols or informative names)
+- protein FASTA for genes in the neighborhood of cas9 (10 genes on each side)
 - GO (Gene Ontology) terms associated with neighboring genes  
 
 How many of the neighborhoods are unique? Can they be classified and made non-redundant?
@@ -30,13 +30,13 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 ### (A) Retrieve g-proteobacteria assemblies
 (i)  retrieve assemblies with GFF, genomic and protein sequences
 
-(ii) find cas9 genes and the gene neighborhood (10kB upstream/downstream)
+(ii) find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
 
 (iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
-### (B) Use cas9 protein sequence to look for similar proteins but without the cas9 symbol
-(i) tblastn using cas9 HMM profiles
+### (B) Use cas9 protein/HMM profile sequence to look for similar proteins but without the cas9 symbol
+(i) tblastn using cas9 HMM profiles (TIGR03031 and TIGR01865)
 
 * build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
 
@@ -60,13 +60,13 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 ### (C) Neighborhood analysis
 
-* for genes upstream / downstream of Cas9 (from A ii), are there any patterns?
+* for genes upstream / downstream of cas9 (from A ii), are there any patterns?
 
-* For non Cas genes, characterize:  domain structure, GO terms?
+* For non-cas genes, characterize:  domain structure, GO terms?
 
-* Cas proteins present - Cas1, Cas2, Cas4
+* cas genes clustered in the neighborhood - Cas1, Cas2, Cas4
 
-* Other Cas-related genes?
+* Other cas-related genes?
 
 * neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
 
@@ -114,17 +114,22 @@ For the 76 cases in which the downloaded package did not contain a genomic.gff f
 
 In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.   
 
-### Identifying unannotated cas9 proteins
+### Identifying unannotated Cas9 proteins
 
-Methods evaluated on test set:
+#### Methods evaluated on test set:
 
-* rpstblastn
-* tblastn
-* ORFfinder/rpsblast
-* ORFfinder/hmm-search - fastest 
+* tblastn - protein query vs. translated nucleotide database
+* rpstblastn - genomic sequence vs. db of HMM profiles
+* ORFfinder/HMM profiles - protein query  
+  rpsblast  
+   hmmsearch - fastest; used this for cas9 discovery 
 
 
-combined 3 HMM profiles into 1 file so we can search multiple profiles in one pass
+#### ORFfinder/hmmsearch
+
+* TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
+* TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
+
    
 in `/usr/local/data/testset-1`
    
