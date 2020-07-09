@@ -1,6 +1,7 @@
 import argparse
 from collections import defaultdict
 from dataclasses import dataclass, field
+from enum import Enum, unique, auto
 import json
 import os
 import re
@@ -89,11 +90,42 @@ class Gene:
         return self.protein_accession if self.protein_accession else self.name
 
 
+@unique
+class Justification(Enum):
+    LEFT = auto()
+    RIGHT = auto()
+
+
+def justify_vals(vals, size, default_val, justify: Justification = Justification.LEFT):
+    add = size - len(vals)
+    if add < 1:
+        # return a subset of vals
+        if justify == Justification.LEFT:
+            return vals[0:size]
+        elif justify == Justification.RIGHT:
+            return vals[-size:]
+    # pad vals with additional elements
+    if justify == Justification.LEFT:
+        vals.extend([default_val] * add)
+    elif justify == Justification.RIGHT:
+        vals = ([default_val] * add) + vals
+    return vals
+
+
 @dataclass
 class Neighbors:
     gene: Gene
     upstream: List[Gene] = field(default_factory=list)
     downstream: List[Gene] = field(default_factory=list)
+
+    def get_neighborhood_as_table(self, upstream_count=10, downstream_count=10, justify=True):
+        u = [g.name_val() for g in self.upstream]
+        d = [g.name_val() for g in self.downstream]
+        if justify:
+            u = justify_vals(u, upstream_count, None, Justification.RIGHT)
+            d = justify_vals(d, downstream_count, None, Justification.LEFT)
+        n = u + [self.gene.name] + d
+        return n
 
 
 def extract_genes(gff3_db, desired_gene):
@@ -213,10 +245,10 @@ class ThisApp:
                                 sort_attribute_values=True
                             )
                             found_gene = extract_genes(db, gene)
-                            names = [g.name_val() for g in found_gene.upstream] + [found_gene.gene.name] + [g.name_val() for g in found_gene.downstream]
+                            neighbors = found_gene.get_neighborhood_as_table()
                             # print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
                             fout1.write(str(found_gene.gene))
-                            fout2.write(f'{names}\n')
+                            fout2.write(f'{neighbors}\n')
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
