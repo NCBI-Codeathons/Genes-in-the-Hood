@@ -169,7 +169,7 @@ class ThisApp:
             print(f'{acc} : {err}')
             fout.write(f'{acc}\tError\n')
 
-    def process_zip_files(self, zip_files):
+    def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
         window = self.args.window
