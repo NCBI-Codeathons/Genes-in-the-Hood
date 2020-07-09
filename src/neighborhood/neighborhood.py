@@ -1,5 +1,7 @@
 import argparse
+import gffutils
 import os
+import re
 import zipfile
 
 
@@ -34,22 +36,32 @@ class ThisApp:
     def process_zip_files(self, zip_files):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
+        window = self.args.window
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
-        with open(report_file_1, 'w') as fout:
+        report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
+        with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
             for zip_file in zip_files:
-                # print('ZIP', zip_file) ...
+                # print('ZIP', zip_file)
                 acc = self.get_accession(zip_file)
                 try:
                     with zipfile.ZipFile(zip_file, 'r') as zin:
                         gff_lines = self.read_file_lines(zin, f'ncbi_dataset/data/{acc}/genomic.gff')
                         seq, pos1, pos2, gene_type = self.find_gene(gene, gff_lines)
-                        fout.write(f'{acc}\t{gene_type}\t{seq}\t{pos1}\t{pos2}\n')
+                        fout1.write(f'{acc}\t{gene_type}\n')
+                        if gene_type is not None:
+                            print(f'{acc}: found {gene} {gene_type}')
+                            lo, hi = pos1 - window, pos2 + window
+                            hood = self.get_neighborhood(gff_lines, seq, lo, hi)
+                            fout2.write(f'{acc}\t{hood}\n')
+                except PermissionError as err:
+                    print(f'{acc} : {err}')
+                    fout1.write(f'{acc}\tError\n')
                 except zipfile.BadZipFile:
                     print(f'{zip_file} is not a zip file')
-                    fout.write(f'{acc}\tError\n')
+                    fout1.write(f'{acc}\tError\n')
                 except KeyError as err:
                     print(f'{acc} : {err}')
-                    fout.write(f'{acc}\tError\n')
+                    fout1.write(f'{acc}\tError\n')
 
     def get_accession(self, file_name):
         # For now, extract from filename,  Ideally, it should come from a file within
@@ -71,6 +83,28 @@ class ThisApp:
             if col[2] in ('gene', 'pseudogene') and gene_attr in line:
                 return col[0], int(col[3]), int(col[4]), col[2]
         return None, None, None, None
+
+    def get_neighborhood(self, gff_lines, seq, lo, hi):
+        # TODO: here we want to feed gff_lines into gffutils.create_db()
+        # not sure if it needs to be on disk or if we can use io.StringIO
+
+        # Doing something quick-and-dirty for now
+        genes = []
+        for line in gff_lines:
+            col = line.split('\t')
+            if col[0] == seq:
+                pos1, pos2, gene_type = int(col[3]), int(col[4]), col[2]
+                if gene_type in ('gene', 'pseudogene') and (pos1 in range(lo, hi) or pos2 in range(lo, hi)):
+                    attr = self.attributes(col[8])
+                    gene = attr.get('gene') or attr.get('product') or attr.get('Name') or attr.get('locus_tag')
+                    if gene_type == 'pseudogene':
+                        gene += '(ps)'
+                    genes.append(gene)
+        return '-'.join(genes)
+
+    def attributes(self, col_9):
+        parts = [x.split('=') for x in col_9.split(';')]
+        return {x: y for (x, y) in parts}
 
 
 if __name__ == '__main__':

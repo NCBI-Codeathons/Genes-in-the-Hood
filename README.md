@@ -93,3 +93,7 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
 
+
+## Assembly download and classification
+
+The NCBI Datasets command-line tool was used to download reference assembly packages for 79,802 species within the gammaproteobacteria (taxid 1236).
