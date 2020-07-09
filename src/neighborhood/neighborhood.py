@@ -72,6 +72,7 @@ def get_all_files(path):
 
 @dataclass
 class Gene:
+    id: str
     feat_type: str
     chrom: str
     strand: str
@@ -94,6 +95,7 @@ def extract_genes(gff3_db, desired_gene):
                 prot_acc = cds[0].attributes.get('protein_id', None)[0]
 
             geneobj = Gene(
+                gene.id,
                 feat_type,
                 gene.chrom,
                 gene.strand,
@@ -105,13 +107,25 @@ def extract_genes(gff3_db, desired_gene):
             if gene_name == desired_gene:
                 found_gene = geneobj
     if found_gene:
-        neighbors = get_neighborhood_by_count(found_gene, genes_by_chrom[found_gene.chrom], 10)
-    return found_gene, neighbors
+        upstream, downstream = get_neighborhood_by_count(found_gene, genes_by_chrom[found_gene.chrom], 10)
+    return found_gene, upstream, downstream
 
 
 def get_neighborhood_by_count(gene, genes, count):
     sorted_genes = sorted(genes, key=lambda g: g.range_start)
-    return sorted_genes
+    idx = sorted_genes.index(gene)
+    upstream = []
+    downstream = []
+    offset = count + 1
+    if idx > 0:
+        idx_start = idx - offset if idx >= offset else 0
+        upstream = sorted_genes[idx_start:idx - 1]
+    if idx < len(sorted_genes):
+        idx_stop = idx + offset
+        if idx_stop >= len(sorted_genes):
+            idx_stop = len(sorted_genes) - 1
+        downstream = sorted_genes[idx + 1:idx_stop]
+    return upstream, downstream
 
 
 def get_neighborhood_by_pos(genes, seq, lo, hi):
@@ -184,8 +198,8 @@ class ThisApp:
                                 merge_strategy='merge',
                                 sort_attribute_values=True
                             )
-                            found_gene, neighbors = extract_genes(db, gene)
-                            print(assm_acc, found_gene)
+                            found_gene, upstream, downstream = extract_genes(db, gene)
+                            print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
                             # fout.write(f'{acc}\t{gene_type}\t{seq}\t{pos1}\t{pos2}\n')
         except zipfile.BadZipFile:
