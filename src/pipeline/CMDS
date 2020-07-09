@@ -1,0 +1,1 @@
+cat file_list.txt | parallel -j10 ./find_matching_orfs.sh -m TIGR0_combined2.HMM -a {}
