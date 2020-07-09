@@ -1,1 +1,2 @@
-gfftools~=0.10
+gffutils~=0.10
+ncbi-datasets-pylib
