@@ -1,10 +1,11 @@
 import argparse
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import json
 import os
 import re
 import tempfile
+from typing import List
 import zipfile
 
 import gffutils
@@ -84,9 +85,20 @@ class Gene:
     def __str__(self):
         return f'{self.chrom}\t{self.feat_type}\t{self.name}\t{self.range_start}\t{self.range_stop}\t{self.protein_accession}\n'
 
+    def name_val(self):
+        return self.protein_accession if self.protein_accession else self.name
+
+
+@dataclass
+class Neighbors:
+    gene: Gene
+    upstream: List[Gene] = field(default_factory=list)
+    downstream: List[Gene] = field(default_factory=list)
+
 
 def extract_genes(gff3_db, desired_gene):
     neighbors = []
+    gene_neighborhood = None
     found_gene = None
     genes_by_chrom = defaultdict(list)
 
@@ -110,27 +122,24 @@ def extract_genes(gff3_db, desired_gene):
             )
             genes_by_chrom[gene.chrom].append(geneobj)
             if gene_name == desired_gene:
-                found_gene = geneobj
-    if found_gene:
-        upstream, downstream = get_neighborhood_by_count(found_gene, genes_by_chrom[found_gene.chrom], 10)
-    return found_gene, upstream, downstream
+                gene_neighborhood = Neighbors(geneobj)
+    if gene_neighborhood:
+        get_neighborhood_by_count(gene_neighborhood, genes_by_chrom[gene_neighborhood.gene.chrom], 10)
+    return gene_neighborhood
 
 
-def get_neighborhood_by_count(gene, genes, count):
+def get_neighborhood_by_count(neighborhood, genes, count):
     sorted_genes = sorted(genes, key=lambda g: g.range_start)
-    idx = sorted_genes.index(gene)
-    upstream = []
-    downstream = []
+    idx = sorted_genes.index(neighborhood.gene)
     offset = count + 1
     if idx > 0:
         idx_start = idx - offset if idx >= offset else 0
-        upstream = sorted_genes[idx_start:idx - 1]
+        neighborhood.upstream = sorted_genes[idx_start:idx - 1]
     if idx < len(sorted_genes):
         idx_stop = idx + offset
         if idx_stop >= len(sorted_genes):
             idx_stop = len(sorted_genes) - 1
-        downstream = sorted_genes[idx + 1:idx_stop]
-    return upstream, downstream
+        neighborhood.downstream = sorted_genes[idx + 1:idx_stop]
 
 
 def get_neighborhood_by_pos(genes, seq, lo, hi):
@@ -203,10 +212,10 @@ class ThisApp:
                                 merge_strategy='merge',
                                 sort_attribute_values=True
                             )
-                            found_gene, upstream, downstream = extract_genes(db, gene)
-                            names = [g.name for g in upstream] + [found_gene.name] + [g.name for g in downstream]
+                            found_gene = extract_genes(db, gene)
+                            names = [g.name_val() for g in found_gene.upstream] + [found_gene.gene.name] + [g.name_val() for g in found_gene.downstream]
                             # print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
-                            fout1.write(str(found_gene))
+                            fout1.write(str(found_gene.gene))
                             fout2.write(f'{names}\n')
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
         except zipfile.BadZipFile:
