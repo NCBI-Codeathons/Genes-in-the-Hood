@@ -43,7 +43,7 @@ class ThisApp:
                     with zipfile.ZipFile(zip_file, 'r') as zin:
                         gff_lines = self.read_file_lines(zin, f'ncbi_dataset/data/{acc}/genomic.gff')
                         seq, pos1, pos2, gene_type = self.find_gene(gene, gff_lines)
-                        fout.write(f'{acc}\t{gene_type}\n')
+                        fout.write(f'{acc}\t{gene_type}\t{seq}\t{pos1}\t{pos2}\n')
                 except zipfile.BadZipFile:
                     print(f'{zip_file} is not a zip file')
                     fout.write(f'{acc}\tError\n')
