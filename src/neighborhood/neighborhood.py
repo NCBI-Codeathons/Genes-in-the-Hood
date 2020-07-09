@@ -73,18 +73,19 @@ def extract_genes(gff3_db, desired_genes):
     crispr_order = []
     crispr_genes = {}
 
-    for gene in gff3_db.features_of_type('gene'):
-        gene_name = gene.attributes.get('Name', None)[0]
-        if gene_name not in desired_genes:
-            continue
-        gene_range = (gene.start, gene.end)
-        prot_acc = None
-        if gene.attributes['gene_biotype'][0] == 'protein_coding':
-            cds = list(gff3_db.children(gene, featuretype='CDS'))
-            prot_acc = cds[0].attributes.get('protein_id', None)[0]
+    for feat_type in ['gene', 'pseudogene']:
+        for gene in gff3_db.features_of_type(feat_type):
+            gene_name = gene.attributes.get('Name', None)[0]
+            if gene_name not in desired_genes:
+                continue
+            gene_range = (gene.start, gene.end)
+            prot_acc = None
+            if gene.attributes['gene_biotype'][0] == 'protein_coding':
+                cds = list(gff3_db.children(gene, featuretype='CDS'))
+                prot_acc = cds[0].attributes.get('protein_id', None)[0]
 
-        crispr_genes[gene_name] = ([gene.chrom, gene.strand, gene_range, prot_acc])
-        crispr_order.append(gene_name)
+            crispr_genes[gene_name] = ([feat_type, gene.chrom, gene.strand, gene_range, prot_acc])
+            crispr_order.append(gene_name)
     return crispr_genes, crispr_order
 
 
