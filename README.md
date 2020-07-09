@@ -102,9 +102,10 @@ Initial classification is as follows.
 
 (how do you do a table in md?)
 
-||category||genomes||
-|has cas9 gene|418|
-|has cas9 pseudogene|251|
-|no cas9 annotated|79,057|
-|missing genomic.gff|76|
+| category            | genomes |
+|---------------------|---------|
+| has cas9 gene       |418     |
+| has cas9 pseudogene |    251    |
+| no cas9 annotated   | 79,057 |
+| missing genomic.gff |     76 |
 
