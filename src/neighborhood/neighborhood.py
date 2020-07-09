@@ -33,14 +33,23 @@ class ThisApp:
 
     def process_zip_files(self, zip_files):
         print(f'Processing {len(zip_files)} assemblies ...')
-        for zip_file in zip_files:
-            # print(zip_file)
-            acc = self.get_accession(zip_file)
-            try:
-                with zipfile.ZipFile(zip_file, 'r') as zin:
-                    gff_lines = self.read_file_lines(zin, f'ncbi_dataset/data/{acc}/genomic.gff')
-            except zipfile.BadZipFile:
-                print(f'{zip_file} is not a zip file')
+        gene = self.args.gene
+        report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
+        with open(report_file_1, 'w') as fout:
+            for zip_file in zip_files:
+                # print('ZIP', zip_file) ...
+                acc = self.get_accession(zip_file)
+                try:
+                    with zipfile.ZipFile(zip_file, 'r') as zin:
+                        gff_lines = self.read_file_lines(zin, f'ncbi_dataset/data/{acc}/genomic.gff')
+                        seq, pos1, pos2, gene_type = self.find_gene(gene, gff_lines)
+                        fout.write(f'{acc}\t{gene_type}\n')
+                except zipfile.BadZipFile:
+                    print(f'{zip_file} is not a zip file')
+                    fout.write(f'{acc}\tError\n')
+                except KeyError as err:
+                    print(f'{acc} : {err}')
+                    fout.write(f'{acc}\tError\n')
 
     def get_accession(self, file_name):
         # For now, extract from filename,  Ideally, it should come from a file within
@@ -50,9 +59,18 @@ class ThisApp:
         return f'{x[0]}.{x[1]}'
 
     def read_file_lines(self, zin, file_name):
-        print(f'Extracting {file_name}')
-        with zin.open(file_name) as fin:
-            return fin.read()
+        # print(f'Extracting {file_name}')
+        with zin.open(file_name, 'r') as fin:
+            lines = [x.decode() for x in fin.readlines()]
+            return [x for x in lines if not x[0] == '#']
+
+    def find_gene(self, gene, gff_lines):
+        gene_attr = f';gene={gene};'
+        for line in gff_lines:
+            col = line.split('\t')
+            if col[2] in ('gene', 'pseudogene') and gene_attr in line:
+                return col[0], int(col[3]), int(col[4]), col[2]
+        return None, None, None, None
 
 
 if __name__ == '__main__':
