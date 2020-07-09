@@ -34,7 +34,14 @@ class ThisApp:
         all_zip_files = []
         for root, dirs, files in os.walk(path):
             all_zip_files += [os.path.join(root, x) for x in files if x.endswith('.zip')]
-        return all_zip_files
+        if self.args.accession:
+            desired = [self.args.accession]
+        elif self.args.accession_file:
+            with open(self.args.accession_file, 'r') as fin:
+                desired = fin.read().split('\n')
+        else:
+            return all_zip_files
+        return [x for x in desired if x in all_zip_files]
 
     def process_zip_files(self, zip_files):
         print(f'Processing {len(zip_files)} assemblies ...')
