@@ -96,11 +96,9 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 ## Assembly download and classification
 
-The NCBI Datasets command-line tool was used to download reference assembly packages for 79,802 species within the gammaproteobacteria (taxid 1236).
+The NCBI Datasets command-line tool was used to download all available reference assemblies within the clade for gamaproteobacteria (tax ID 1236).  In total this amounted to 79,802 datasets.
 
-Initial classification is as follows.
-
-(how do you do a table in md?)
+An initial classification of these datasets involved scanning the genomic.gff file for the presence or absence of "cas9", annotated either as a gene or a pseudogene.
 
 | category            | genomes |
 |---------------------|---------|
@@ -108,4 +106,6 @@ Initial classification is as follows.
 | has cas9 pseudogene |     251 |
 | no cas9 annotated   |  79,057 |
 | missing genomic.gff |      76 |
+
+For the 76 cases in which the downloaded package did not contain a genomic.gff file, it was noted that the file was present on the FTP site, so this is an apparent bug for NCBI Datasets.
 
