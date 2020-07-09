@@ -74,11 +74,15 @@ def get_all_files(path):
 class Gene:
     id: str
     feat_type: str
+    name: str
     chrom: str
     strand: str
     range_start: int
     range_stop: int
     protein_accession: str = None
+
+    def __str__(self):
+        return f'{self.chrom}\t{self.feat_type}\t{self.name}\t{self.range_start}\t{self.range_stop}\t{self.protein_accession}\n'
 
 
 def extract_genes(gff3_db, desired_gene):
@@ -97,6 +101,7 @@ def extract_genes(gff3_db, desired_gene):
             geneobj = Gene(
                 gene.id,
                 feat_type,
+                gene_name,
                 gene.chrom,
                 gene.strand,
                 gene.start,
@@ -180,7 +185,7 @@ class ThisApp:
         zip_files = get_zip_files(self.args.accession_file, self.args.input_path)
         self.process_zip_files(zip_files)
 
-    def process_zip_file(self, zip_file, gene):
+    def process_zip_file(self, zip_file, gene, fout1, fout2):
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
                 catalog = retrieve_data_catalog(zin)
@@ -199,12 +204,15 @@ class ThisApp:
                                 sort_attribute_values=True
                             )
                             found_gene, upstream, downstream = extract_genes(db, gene)
-                            print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
+                            names = [g.name for g in upstream] + [found_gene.name] + [g.name for g in downstream]
+                            # print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
+                            fout1.write(str(found_gene))
+                            fout2.write(f'{names}\n')
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
-                            # fout.write(f'{acc}\t{gene_type}\t{seq}\t{pos1}\t{pos2}\n')
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
-            fout.write(f'{acc}\tError\n')
+            fout1.write('--ERROR--')
+            fout2.write('--ERROR--')
 
     def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
@@ -214,7 +222,7 @@ class ThisApp:
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
             for zip_file in zip_files:
-                self.process_zip_file(zip_file, gene)
+                self.process_zip_file(zip_file, gene, fout1, fout2)
 
 
 if __name__ == '__main__':
