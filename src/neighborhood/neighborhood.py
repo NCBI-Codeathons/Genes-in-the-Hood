@@ -1,5 +1,6 @@
 import argparse
 from collections import defaultdict
+from dataclasses import dataclass
 import json
 import os
 import re
@@ -69,32 +70,51 @@ def get_all_files(path):
     return zip_files
 
 
-def extract_genes(gff3_db, desired_genes):
-    crispr_order = []
-    crispr_genes = {}
+@dataclass
+class Gene:
+    feat_type: str
+    chrom: str
+    strand: str
+    range_start: int
+    range_stop: int
+    protein_accession: str = None
+
+
+def extract_genes(gff3_db, desired_gene):
+    neighbors = []
+    found_gene = None
+    genes_by_chrom = defaultdict(list)
 
     for feat_type in ['gene', 'pseudogene']:
         for gene in gff3_db.features_of_type(feat_type):
             gene_name = gene.attributes.get('Name', None)[0]
-            if gene_name not in desired_genes:
-                continue
             prot_acc = None
             if gene.attributes['gene_biotype'][0] == 'protein_coding':
                 cds = list(gff3_db.children(gene, featuretype='CDS'))
                 prot_acc = cds[0].attributes.get('protein_id', None)[0]
 
-            crispr_genes[gene_name] = {
-                'feat_type': feat_type,
-                'chrom': gene.chrom,
-                'strand': gene.strand,
-                'range': {'start': gene.start, 'stop': gene.stop},
-                'protein_accession': prot_acc
-            }
-            crispr_order.append(gene_name)
-    return crispr_genes, crispr_order
+            geneobj = Gene(
+                feat_type,
+                gene.chrom,
+                gene.strand,
+                gene.start,
+                gene.stop,
+                prot_acc,
+            )
+            genes_by_chrom[gene.chrom].append(geneobj)
+            if gene_name == desired_gene:
+                found_gene = geneobj
+    if found_gene:
+        neighbors = get_neighborhood_by_count(found_gene, genes_by_chrom[found_gene.chrom], 10)
+    return found_gene, neighbors
 
 
-def get_neighborhood(gff_lines, seq, lo, hi):
+def get_neighborhood_by_count(gene, genes, count):
+    sorted_genes = sorted(genes, key=lambda g: g.range_start)
+    return sorted_genes
+
+
+def get_neighborhood_by_pos(genes, seq, lo, hi):
     # TODO: here we want to feed gff_lines into gffutils.create_db()
     # not sure if it needs to be on disk or if we can use io.StringIO
 
@@ -111,6 +131,7 @@ def get_neighborhood(gff_lines, seq, lo, hi):
                     gene += '(ps)'
                 genes.append(gene)
     return '-'.join(genes)
+
 
 def col9_attributes(col_9):
     parts = [x.split('=') for x in col_9.split(';')]
@@ -146,7 +167,6 @@ class ThisApp:
         self.process_zip_files(zip_files)
 
     def process_zip_file(self, zip_file, gene):
-        # print('ZIP', zip_file) ...
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
                 catalog = retrieve_data_catalog(zin)
@@ -164,15 +184,12 @@ class ThisApp:
                                 merge_strategy='merge',
                                 sort_attribute_values=True
                             )
-                            genes, order = extract_genes(db, [gene])
-                            print(assm_acc, genes)
+                            found_gene, neighbors = extract_genes(db, gene)
+                            print(assm_acc, found_gene)
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
                             # fout.write(f'{acc}\t{gene_type}\t{seq}\t{pos1}\t{pos2}\n')
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
-            fout.write(f'{acc}\tError\n')
-        except KeyError as err:
-            print(f'{acc} : {err}')
             fout.write(f'{acc}\tError\n')
 
     def process_zip_files(self, zip_files, accessions=None):
