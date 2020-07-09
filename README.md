@@ -94,7 +94,8 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 * neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
 
 
-## Assembly download and classification
+## Results
+### Assembly download and classification
 
 The NCBI Datasets command-line tool was used to download all available reference assemblies within the clade for gamaproteobacteria (tax ID 1236).  In total this amounted to 79,802 datasets.
 
@@ -108,4 +109,7 @@ An initial classification of these datasets involved scanning the genomic.gff fi
 | missing genomic.gff |      76 |
 
 For the 76 cases in which the downloaded package did not contain a genomic.gff file, it was noted that the file was present on the FTP site, so this is an apparent bug for NCBI Datasets.
+
+In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.
+
 
