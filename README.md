@@ -96,7 +96,7 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 
 
-## Results
+## Methods and Results
 ### Assembly download and classification
 
 The NCBI Datasets command-line tool was used to download all available reference assemblies within the clade for gamaproteobacteria (tax ID 1236).  In total this amounted to 79,802 datasets.                  
