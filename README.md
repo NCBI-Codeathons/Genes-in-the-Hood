@@ -112,4 +112,20 @@ For the 76 cases in which the downloaded package did not contain a genomic.gff f
 
 In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.
 
+### Identifying unannotated Cas9 
 
+Methods evaluated on test set:
+
+* rpstblastn
+
+* tblastn
+
+* ORFfinder/rpsblast
+
+* ORFfinder/hmm-search - fastest 
+
+### Neighborhood analysis
+
+* Cas proteins present - Cas1, Cas2, Cas4
+
+* 10 genes on either side vs. 10 kb
