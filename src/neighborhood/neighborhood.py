@@ -48,15 +48,19 @@ def get_file_list(data_catalog, desired_filetype):
     return files
 
 
-def get_zip_files(path):
+def get_zip_files_for_accs(accs, path):
     zip_files = []
-    with open('/usr/local/data/cas9_gene.gcf', 'r') as accfile:
-        for acc in accfile:
-            acc = acc.rstrip('\n')
-            fname = os.path.join(path, f'{acc}.zip')
-            if os.path.isfile(fname):
+    for acc in accs:
+        fname = os.path.join(path, f'{acc}.zip')
+        if os.path.isfile(fname):
                 zip_files.append(fname)
     return zip_files
+
+
+def get_zip_files(accfile_path, path):
+    with open(accfile_path, 'r') as accfile:
+        return get_zip_files_for_accs([acc.rstrip('\n') for acc in accfile], path)
+    return None
 
 
 def get_all_files(path):
@@ -109,7 +113,7 @@ def col9_attributes(col_9):
 
 
 class ThisApp:
-    default_input_acc_path = '/usr/local/data/cas9_gene.gcf'
+    default_input_accfile_path = '/usr/local/data/cas9_gene.gcf'
     default_input_path = os.path.join('var', 'data', 'packages')
     default_output_path = os.path.join('var', 'data', 'neighborhood')
     default_gene = 'cas9'
@@ -117,13 +121,6 @@ class ThisApp:
 
     def __init__(self):
         parser = argparse.ArgumentParser()
-        parser.add_argument(
-            '-a',
-            '--input-accession-file',
-            type=str,
-            default=self.default_input_acc_path,
-            help=f'file containing accessions of interest [{self.default_input_acc_path}]',
-        )
         parser.add_argument('-I', '--input-path', type=str, default=self.default_input_path,
                             help=f'root of input data directory [{self.default_input_path}]')
         parser.add_argument('-O', '--output-path', type=str, default=self.default_output_path,
@@ -132,10 +129,14 @@ class ThisApp:
                             help=f'gene symbol [{self.default_gene}]')
         parser.add_argument('-w', '--window', type=int, default=self.defult_window_bp,
                             help=f'gene symbol [{self.defult_window_bp}]')
+        parser.add_argument('-a', '--accession', type=str, default=None,
+                            help='accession - limit the analysis to this accession [none]')
+        parser.add_argument('-A', '--accession-file', type=str, default=self.default_input_accfile_path,
+                            help='file of accessions - limit the analysis to these accessions')
         self.args = parser.parse_args()
 
     def run(self):
-        zip_files = get_zip_files(self.args.input_path)
+        zip_files = get_zip_files(self.args.accession_file, self.args.input_path)
         self.process_zip_files(zip_files)
 
     def process_zip_file(self, zip_file, gene):
