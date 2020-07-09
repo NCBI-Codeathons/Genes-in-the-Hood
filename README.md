@@ -64,9 +64,39 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 
 ### (C) Neighborhood analysis
-- for genes upstream / downstream of Cas9 (from A ii), are there any patterns?
-- Other Cas-related genes?
-- For non Cas genes, characterize:  domain structure, GO terms?
+
+* for genes upstream / downstream of Cas9 (from A ii), are there any patterns?
+
+* For non Cas genes, characterize:  domain structure, GO terms?
+
+* Cas proteins present - Cas1, Cas2, Cas4
+
+* Other Cas-related genes?
+
+* neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
+
+* 10 genes on either side vs. 10 kb
+
+
+## Results
+### Assembly download and classification
+
+The NCBI Datasets command-line tool was used to download all available reference assemblies within the clade for gamaproteobacteria (tax ID 1236).  In total this amounted to 79,802 datasets.                  
+
+An initial classification of these datasets involved scanning the genomic.gff file for the presence or absence of "cas9", annotated either as a gene or a pseudogene.                                           
+
+| category            | assemblies |
+|---------------------|---------|
+| has cas9 gene       |     418 |
+| has cas9 pseudogene |     251 |
+| no cas9 annotated   |  79,057 |
+| missing genomic.gff |      76 |
+
+For the 76 cases in which the downloaded package did not contain a genomic.gff file, it was noted that the file was present on the FTP site, so this is an apparent bug for NCBI Datasets.                      
+
+In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.   
+
+
 
 
 ## Work Plan 
@@ -143,9 +173,4 @@ Methods evaluated on test set:
       orf.10_TIGR0_com_HMMsearch tabulated hmmsearch output
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
-
-### Neighborhood analysis
-
-* Cas proteins present - Cas1, Cas2, Cas4
-
 
