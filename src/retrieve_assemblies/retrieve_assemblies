@@ -3,7 +3,7 @@
 SCRIPTDIR=$(dirname $0)
 TAXID=1236
 XARGS="xargs --max-procs=8"
-TARGET_DIR=/usr/local/data/assemblies
+TARGET_DIR=/usr/local/data/assemblies/packages
 YAML=${TARGET_DIR}/gproteobacteria.assembly-descriptors.yaml
 
 find ${TARGET_DIR} -name "*.zip" -size -2k -exec rm -v {} \;

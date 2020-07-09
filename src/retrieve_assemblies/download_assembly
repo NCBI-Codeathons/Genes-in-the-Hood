@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 
 ACC=${1-foo}
-TARGET_DIR=${2-/usr/local/data/assemblies}
-FNAME=${TARGET_DIR}/${ACC}.zip
-CHECK_ZIPS=0
+TARGET_DIR=$(readlink -f ${2-/usr/local/data/assemblies/packages})
+FNAME=$(readlink -f ${TARGET_DIR}/${ACC}.zip)
+CHECK_ZIPS=1
 MAX_RETRY_COUNT=5
 
 if [[ $CHECK_ZIPS -eq 1 ]]
 then
     if [[ -s ${FNAME} ]]
     then
-        unzip -qq -t ${FNAME}
-        if (( $? ))
+        unzip -qq -t "${FNAME}"
+        if [[ $? -eq 0 ]]
         then
-            rm -f ${FNAME}
+            exit
         fi
+        rm -f "${FNAME}"
     fi
 fi
 
@@ -23,11 +24,30 @@ do
     if [[ ! -s ${FNAME} ]]
     then
         datasets download assembly ${ACC} --filename "${FNAME}" --include-seq --include-protein --include-gff3
-        unzip -q -t ${FNAME}
+        unzip -qq -t ${FNAME}
         if [[ $? -eq 0 ]]
         then
             exit
         fi
+        rm -f "${FNAME}"
     fi
 done
 
+TARGET_FNAME="${FNAME}"
+FNAME=$(readlink -f ${TARGET_DIR}/${ACC}-d.zip)
+
+for retry in `seq ${MAX_RETRY_COUNT}`
+do
+    datasets download assembly ${ACC} --filename "${FNAME}" --include-seq --include-protein --include-gff3 --dehydrated
+    unzip -q -t ${FNAME}
+    if [[ $? -eq 0 ]]
+    then
+        TMPDIR=$(mktemp -d --tmpdir=${TARGET_DIR} --dry-run) &&
+        unzip -d ${TMPDIR} "${FNAME}" &&
+        datasets rehydrate --filename "${TMPDIR}" &&
+        (cd ${TMPDIR}; zip -u -r "${FNAME}" .)
+        mv "${FNAME}" "${TARGET_FNAME}"
+        rm -rf ${TMPDIR}
+        exit
+    fi
+done
