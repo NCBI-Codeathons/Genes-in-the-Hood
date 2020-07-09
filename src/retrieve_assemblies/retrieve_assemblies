@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+SCRIPTDIR=$(dirname $0)
+TAXID=1236
+XARGS="xargs --max-procs=8"
+TARGET_DIR=/usr/local/data/assemblies
+YAML=${TARGET_DIR}/gproteobacteria.assembly-descriptors.yaml
+
+find ${TARGET_DIR} -name "*.zip" -size -2k -exec rm -v {} \;
+
+if [[ ! -s ${YAML} ]]
+then
+    datasets assembly-descriptors tax-id ${TAXID} --assmaccs --refseq > ${YAML}
+fi
+
+cat ${YAML} |jq -r '.datasets[].assembly_accession' | ${XARGS} -I ACC ${SCRIPTDIR}/download_assembly ACC ${TARGET_DIR}/packages
+

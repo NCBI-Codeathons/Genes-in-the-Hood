@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+ACC=${1-foo}
+TARGET_DIR=${2-/usr/local/data/assemblies}
+FNAME=${TARGET_DIR}/${ACC}.zip
+CHECK_ZIPS=0
+MAX_RETRY_COUNT=5
+
+if [[ $CHECK_ZIPS -eq 1 ]]
+then
+    if [[ -s ${FNAME} ]]
+    then
+        unzip -q -t ${FNAME}
+        if (( $? ))
+        then
+            rm -f ${FNAME}
+        fi
+    fi
+fi
+
+for retry in `seq ${MAX_RETRY_COUNT}`
+do
+    if [[ ! -s ${FNAME} ]]
+    then
+        datasets download assembly ${ACC} --filename "${FNAME}" --include-seq --include-protein --include-gff3
+        unzip -q -t ${FNAME}
+        if [[ $? -eq 0 ]]
+        then
+            exit
+        fi
+    fi
+done
+
