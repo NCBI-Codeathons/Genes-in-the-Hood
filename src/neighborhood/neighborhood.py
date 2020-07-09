@@ -1,7 +1,6 @@
 import argparse
 import gffutils
 import os
-import re
 import zipfile
 
 
@@ -21,19 +20,33 @@ class ThisApp:
                             help=f'gene symbol [{self.default_gene}]')
         parser.add_argument('-w', '--window', type=int, default=self.defult_window_bp,
                             help=f'gene symbol [{self.defult_window_bp}]')
+        parser.add_argument('-a', '--accession', type=str, default=None,
+                            help='accession - limit the analysis to this accession [none]')
+        parser.add_argument('-A', '--accession-file', type=str, default=None,
+                            help='file of accessions - limit the analysis to these accessions')
         self.args = parser.parse_args()
 
     def run(self):
         zip_files = self.get_zip_files(self.args.input_path)
-        self.process_zip_files(zip_files)
+        accessions = self.get_desired_accessions()
+        self.process_zip_files(zip_files, accessions)
 
     def get_zip_files(self, path):
-        zip_files = []
+        all_zip_files = []
         for root, dirs, files in os.walk(path):
-            zip_files += [os.path.join(root, x) for x in files if x.endswith('.zip')]
-        return zip_files
+            all_zip_files += [os.path.join(root, x) for x in files if x.endswith('.zip')]
+        return all_zip_files
 
-    def process_zip_files(self, zip_files):
+    def get_desired_accessions(self):
+        desired = []
+        if self.args.accession:
+            desired = [self.args.accession]
+        elif self.args.accession_file:
+            with open(self.args.accession_file, 'r') as fin:
+                desired = fin.read().split('\n')
+        return desired
+
+    def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
         window = self.args.window
@@ -41,7 +54,6 @@ class ThisApp:
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
             for zip_file in zip_files:
-                # print('ZIP', zip_file)
                 acc = self.get_accession(zip_file)
                 try:
                     with zipfile.ZipFile(zip_file, 'r') as zin:
