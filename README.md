@@ -114,7 +114,7 @@ For the 76 cases in which the downloaded package did not contain a genomic.gff f
 
 In addition, we found two cases which could not be downloaded as fully hydrated packages (after repeated attempts), but could be downloaded in dehydrated form and successfully rehydrated.   
 
-### Identifying unannotated Cas9 
+### Identifying unannotated cas9 proteins
 
 Methods evaluated on test set:
 
