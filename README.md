@@ -79,15 +79,17 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
     * find associated HMM ids, and download the HMM profiles
     * determine NCBI ftp URL for HMM profile
     * download the HMM profiles
-  * for each protein and hmm pair, run `rpstblastn` (B.i) and `tblastn` (B.ii) (preliminary testing done - for single assembly in B.i; single iput protein for B.ii)
+  * for each protein and hmm pair, run `rpstblastn` (B.i) and `tblastn` (B.ii) (testing done - for single assembly in B.i; test_cas9.aa input for B.ii)
 
 * retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
 
-* extract cas9 (WP) sequences from protein.faa -- single fasta
+* extract cas9 (WP) sequences from protein.faa -- single fasta 
 
 * extract list of WP accessions
 
 * retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) (done)
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
+
+* neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
 
