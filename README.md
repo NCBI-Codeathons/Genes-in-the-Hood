@@ -226,23 +226,14 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 #### Top 10 occurring genes/proteins
 
 - cas9
-
 - WP_003016533.1
-
 - WP_003016538.1
-
 - WP_003016535.1
-
 - WP_003016544.1
-
 - WP_003019268.1
-
 - WP_003016518.1
-
 - WP_003016545.1
-
 - WP_003016540.1
-
 - WP_003016537.1
 
 
@@ -257,8 +248,6 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 - table of gene neighboorhood
 
 - Heat map of the gene neighboorhood
-
-- 
 
 
 
