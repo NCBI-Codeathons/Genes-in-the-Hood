@@ -116,14 +116,16 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 #### ORFfinder/hmmsearch
 
 
-* For each assembly, find putative ORFs of at least 300 basepairs...
+* For each assembly, find putative ORFs of at least 300 basepairs
 
   `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
   
   where,
-   `-g 11` = The Bacterial, Archaeal and Plant Plastid Code	
-   `-s 0`  = use ATG only for the ORF start codon
-    `-n t`  = Ignore nested ORFs (completely placed within another)
+   '-g 11' = The Bacterial, Archaeal and Plant Plastid Code
+   
+   '-s 0'  = use ATG only for the ORF start codon
+   
+   '-n t'  = Ignore nested ORFs (completely placed within another)
 
 * retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/).
   * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) &mdash; type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
