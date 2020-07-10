@@ -179,9 +179,17 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 `$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
-Download the cas9 HMM profile from https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/
-* TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
-* TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
+Downloaded the cas9 HMM profile from https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/.
+* [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
+* [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
+
+Concatanated the HMM profiles.
+
+`cat *.HMM > TIGR0_combined2.HMM`
+
+For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100 AAs) and then used hmmsearch to find cas9 homologs.
+
+@@@@ ADD code here@@@@
 
 @@@@ ADD image of html table here@@@@
    
