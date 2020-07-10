@@ -119,7 +119,7 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
   `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
-* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/).
+* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/).
   * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) &mdash; type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
   * [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) &mdash; type II CRISPR RNA-guided endonuclease Cas9
 
