@@ -208,9 +208,11 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 
 
 - Cas proteins cas1, cas2 and cas4 are clustered with cas9   
-   cas1 - function
-   cas2 -  
-   cas4 - 
+   cas1 - endonuclease
+   cas2 - spacer acquistion in CRISPR array 
+   cas4 - exonuclease; capture of new viral DNA sequences  
+   
+   
 - @@@@ any other genes common to the neighboorhood? @@@@
 
 
