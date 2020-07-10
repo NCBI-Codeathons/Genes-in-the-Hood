@@ -80,32 +80,6 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * 10 genes on either side vs. 10 kb
 
-## Work Plan 
-* experiment: testset-1
-  for B, create a small test dataset to test i and ii. small number of assemblies and a selected set of cas9 proteins with associated hmms
-  * choose a handful of assemblies -- random selection: GCF_011754595.1 GCF_902706585.1 GCF_011683955.1 GCF_009811535.1 GCF_000948985.1 GCF_002215215.1 GCF_010592905.1
-  * build a BLAST genomic nucleotide db -- done
-  * extract associated cas9 protein.faa (to `cas9.faa`) -- Ray
-  * for each protein accession in `cas9.faa`, download HMM profiles (done)
-    * find associated HMM ids, and download the HMM profiles
-    * determine NCBI ftp URL for HMM profile
-    * download the HMM profiles
-  * for each protein and hmm pair, run `rpstblastn` (B.i) and `tblastn` (B.ii) (testing done - for single assembly in B.i; test_cas9.aa input for B.ii)
-
-* retrieve (protein.faa, genomic.fna, gff) for 80k g-proteobacteria assemblies in Datasets
-
-* extract cas9 (WP) sequences from protein.faa -- single fasta 
-
-* extract list of WP accessions
-
-* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/).
-  * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
-  * [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
-
-
-
-
-
 
 ## Methods and Results
 ### Assembly download and classification
@@ -144,6 +118,10 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 * For each assembly, find putative ORFs of at least 300 basepairs...
 
   `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
+
+* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/).
+  * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
+  * [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
 
 * For each downloaded assembly, we used `ORFfinder` to translate all the ORFs (>=100 AAs) and then used `hmmsearch` to find cas9 homologs.
 
