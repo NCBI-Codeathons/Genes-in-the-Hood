@@ -3,6 +3,6 @@
 
 | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x |
 |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |-- |
-| ![What is this](img/c10.png) | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x |
+| <a href="google.com">![name](img/c10.png)</a> | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x | x |
 
 
