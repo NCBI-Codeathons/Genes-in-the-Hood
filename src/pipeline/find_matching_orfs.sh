@@ -97,6 +97,11 @@ if $verbose; then
     echo "input_files: $input_files"
 fi
 
+if [ -e "$output_dir/locations.pos" ]; then
+    echo "Results already found"
+    exit 0
+fi
+
 mkdir -p $output_dir
 ORFfinder -in <(cat $input_files) -g 11 -s 0 -ml 300 -n t -outfmt 0 -out $output_dir/orf.faa > $output_dir/ORFfinder.stdout 2> $output_dir/ORFfinder.stderr
 
@@ -104,11 +109,8 @@ hmmsearch --tblout $output_dir/hmmsearch.out $model $output_dir/orf.faa > $outpu
 
 awk 'BEGIN {OFS="\t"} /^[^#]/ {split($1, a, "ORF[0-9]*_"); location=a[1]; split(a[2], b, ":"); print b[1], b[2], b[3], "name="$1"; query="$4"; e-value="$5"; score="$6"; bias="$7}' $output_dir/hmmsearch.out | 
     tee $output_dir/locations.meta |
-    cut -f 1,2,3 > $output_dir/locations.bed
+    cut -f 1,2,3 > $output_dir/locations.pos
 
-cat $output_dir/locations.bed
-
-#if [ ! -z "$gff_files" ]; then 
-#    TODO
-#fi
-
+if $verbose; then
+    cat $output_dir/locations.pos
+fi
