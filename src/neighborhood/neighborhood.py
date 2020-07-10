@@ -1,7 +1,8 @@
 import argparse
-from collections import defaultdict
+from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from enum import Enum, unique, auto
+from pprint import PrettyPrinter
 import json
 import os
 import re
@@ -36,9 +37,6 @@ def get_file_list(data_catalog, desired_filetype):
         acc = asm['accession']
         for f in asm['files']:
             filepath = os.path.join('ncbi_dataset', 'data', f['filePath'])
-            if f['fileType'] == 'FASTA' and desired_filetype in ('GENOMIC_NUCLEOTIDE_FASTA') and filepath.endswith('fna'):
-                files[acc].append(filepath)
-                continue
             if f['fileType'] == 'GFF3':
                 if desired_filetype in ('PROTEIN_FASTA') and filepath.endswith('faa'):
                     files[acc].append(filepath)
@@ -118,14 +116,44 @@ class Neighbors:
     upstream: List[Gene] = field(default_factory=list)
     downstream: List[Gene] = field(default_factory=list)
 
-    def get_neighborhood_as_table(self, upstream_count=10, downstream_count=10, justify=True):
+    def _get_table(self, upstream_count=10, downstream_count=10):
         u = [g.name_val() for g in self.upstream]
         d = [g.name_val() for g in self.downstream]
-        if justify:
-            u = justify_vals(u, upstream_count, None, Justification.RIGHT)
-            d = justify_vals(d, downstream_count, None, Justification.LEFT)
-        n = u + [self.gene.name] + d
-        return n
+        # justify
+        u = justify_vals(u, upstream_count, None, Justification.RIGHT)
+        d = justify_vals(d, downstream_count, None, Justification.LEFT)
+        return u + [self.gene.name] + d
+
+    def get_neighborhood_as_table(self, upstream_count=10, downstream_count=10):
+        table = self._get_table(upstream_count, downstream_count)
+        return table
+
+
+class NeighborhoodFreqs:
+    def __init__(self, size=21):
+        self.all_freqs = Freqs()
+        self.freqs = [Freqs() for n in range(size)]
+
+    def add_terms(self, terms):
+        for t, f in zip(terms, self.freqs):
+            self.all_freqs.add_term(t)
+            f.add_term(t)
+
+    def get_freq_table(self, topn=10):
+        return [f.get_relative_freqs(topn) for f in self.freqs]
+
+    def get_global_freqs(self, topn=10):
+        return self.all_freqs.get_relative_freqs(topn)
+
+
+class Freqs(Counter):
+    def add_term(self, term):
+        if term:
+            self[term] += 1
+
+    def get_relative_freqs(self, topn=10):
+        total_count = sum(self.values())
+        return [(t, count / total_count) for t, count in self.most_common(topn)]
 
 
 def extract_genes(gff3_db, desired_gene):
@@ -221,6 +249,7 @@ class ThisApp:
         parser.add_argument('-A', '--accession-file', type=str, default=self.default_input_accfile_path,
                             help='file of accessions - limit the analysis to these accessions')
         self.args = parser.parse_args()
+        self.freqs = NeighborhoodFreqs()
 
     def run(self):
         zip_files = get_zip_files(self.args.accession_file, self.args.input_path)
@@ -246,6 +275,7 @@ class ThisApp:
                             )
                             found_gene = extract_genes(db, gene)
                             neighbors = found_gene.get_neighborhood_as_table()
+                            self.freqs.add_terms(neighbors)
                             # print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
                             fout1.write(str(found_gene.gene))
                             fout2.write(f'{neighbors}\n')
@@ -262,8 +292,11 @@ class ThisApp:
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
-            for zip_file in zip_files:
+            for zip_file in zip_files[:4]:
                 self.process_zip_file(zip_file, gene, fout1, fout2)
+        pp = PrettyPrinter()
+        pp.pprint(self.freqs.get_freq_table())
+        pp.pprint(self.freqs.get_global_freqs())
 
 
 if __name__ == '__main__':
