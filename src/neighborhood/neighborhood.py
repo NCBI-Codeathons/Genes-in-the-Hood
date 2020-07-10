@@ -168,26 +168,25 @@ def extract_genes(gff3_db, desired_gene):
     gene_neighborhood = None
     genes_by_chrom = defaultdict(list)
 
-    for feat_type in ['gene', 'pseudogene']:
-        for gene in gff3_db.features_of_type(feat_type):
-            gene_name = gene.attributes.get('Name', None)[0]
-            prot_acc = None
-            if gene.attributes['gene_biotype'][0] == 'protein_coding':
-                cds = list(gff3_db.children(gene, featuretype='CDS'))
-                prot_acc = cds[0].attributes.get('protein_id', None)[0]
+    for gene in gff3_db.features_of_type(featuretype=('gene', 'pseudogene')):
+        gene_name = gene.attributes.get('Name', None)[0]
+        prot_acc = None
+        if gene.attributes['gene_biotype'][0] == 'protein_coding':
+            cds = list(gff3_db.children(gene, featuretype='CDS'))
+            prot_acc = cds[0].attributes.get('protein_id', None)[0]
 
-            geneobj = Gene(
-                gene.id,
-                feat_type,
-                gene_name,
-                gene.chrom,
-                gene.strand,
-                gene.start,
-                gene.stop,
-                prot_acc,
-            )
-            genes_by_chrom[gene.chrom].append(geneobj)
-            if gene_name == desired_gene:
+        geneobj = Gene(
+            gene.id,
+            gene.featuretype,
+            gene_name,
+            gene.chrom,
+            gene.strand,
+            gene.start,
+            gene.stop,
+            prot_acc,
+        )
+        genes_by_chrom[gene.chrom].append(geneobj)
+        if gene_name == desired_gene:
                 gene_neighborhood = Neighbors(geneobj)
     if gene_neighborhood:
         get_neighborhood_by_count(gene_neighborhood, genes_by_chrom[gene_neighborhood.gene.chrom], 10)
