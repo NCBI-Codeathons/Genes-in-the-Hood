@@ -50,9 +50,9 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 
 
-## The Project
+## Project Overview
 
-### (A) Retrieve g-proteobacteria assemblies
+### (A) Assembly download and classification
 (i)  retrieve assemblies with GFF, genomic and protein sequences
 
 (ii) find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
@@ -60,27 +60,10 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 (iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
-### (B) Use cas9 protein/HMM profile sequence to look for similar proteins but without the cas9 symbol
-(i) rpstblastn using cas9 HMM profiles (TIGR03031 and TIGR01865)
+### (B) Identify unannotated Cas9 proteins
+(i) test a few methods
 
-* build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
-
-* extract cas9 protein sequences into a single `cas9.faa`
-
-* retrieve TIGRFAM profiles, build BLAST profile db
-
-* execute rpstblastn with the genomic g-proteobacteria sequences
-
-
-(ii) tblastn using cas9 proteins
-
-* build a cas9 protein query set &mdash; a subset of `cas9.faa`
-
-* execute tblastn with the `cas9_filtered.faa` protein query set
-
-* create a protein profile for known cas9 proteins, use hmmer?
-  * domain-based search using rpsblast
-    * look into use of tigrfam as input to makeprofiledb
+(ii) settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
 
 
 ### (C) Neighborhood analysis
