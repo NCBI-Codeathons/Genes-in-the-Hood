@@ -164,11 +164,13 @@ It also put the alignment on the screen. We found 14 hits from 10 assemblies, sa
 - @@@@ any other genes common to the neighboorhood? @@@@
 
 
+#### Heat maps depicting relative frequency of genes/proteins
 
-@@@@ ADD image of table here @@@@
+[Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
+
+[Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
 
 
-@@@@ ADD image of heat map @@@@
 
 #### Top 10 occurring genes/proteins
 
