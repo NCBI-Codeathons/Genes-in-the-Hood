@@ -3,9 +3,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from enum import Enum, unique, auto
 from pprint import PrettyPrinter
-import json
 import os
-import re
 import tempfile
 from typing import List
 import yaml
@@ -13,7 +11,6 @@ import zipfile
 
 import gffutils
 from google.protobuf import json_format
-import ncbi.datasets
 from ncbi.datasets.v1alpha1 import dataset_catalog_pb2
 from ncbi.datasets.v1alpha1.reports import assembly_pb2
 from ncbi.datasets.reports.report_reader import DatasetsReportReader
@@ -377,7 +374,7 @@ class ThisApp:
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
-        report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
+        report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.yaml')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
             for zip_file in zip_files:
                 self.process_zip_file(zip_file, gene, fout1, fout2)
