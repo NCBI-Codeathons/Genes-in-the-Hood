@@ -107,19 +107,14 @@ def justify_vals(vals, size, default_val, justify: Justification = Justification
     return vals
 
 
-@dataclass
-class Assembly:
-    assm_acc: str = ""
-    tax_id: int = 0
-
-
 
 @dataclass
 class Neighbors:
     gene: Gene
     upstream: List[Gene] = field(default_factory=list)
     downstream: List[Gene] = field(default_factory=list)
-    assm: Assembly = field(default_factory=Assembly)
+    assm_acc: str = ""
+    assm_report: assembly_pb2.AssemblyDataReport = field(default_factory=assembly_pb2.AssemblyDataReport)
 
     def _get_table(self, upstream_count=10, downstream_count=10):
         u = [g.name_val() for g in self.upstream]
@@ -249,11 +244,25 @@ def setup_yaml():
             [('taxid', assm.tax_id), ('assm', assm.assm_acc)]
         )
 
-    def neighbors_repr(dumper, neighbors):
+    def assembly_report_repr(dumper, rpt: assembly_pb2.AssemblyDataReport):
         return dumper.represent_mapping(
             yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
             [
-                ('assm', neighbors.assm),
+                ('accession', rpt.assembly_info.assembly_level),
+                ('name', rpt.assembly_info.assembly_name),
+                ('tax_id', rpt.tax_id),
+                ('species', rpt.species_name),
+                ('strain', rpt.strain),
+            ]
+        )
+
+    def neighbors_repr(dumper, neighbors):
+        # hack to pass the assm_acc into assembly_report_repr()
+        neighbors.assm_report.assembly_info.assembly_level = neighbors.assm_acc
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('assembly', neighbors.assm_report),
                 ('gene', neighbors.gene),
                 ('upstream', neighbors.upstream),
                 ('downstream', neighbors.downstream),
@@ -307,7 +316,8 @@ def setup_yaml():
     yaml.add_representer(NeighborhoodReport, neighborhood_report_repr)
     yaml.add_representer(NeighborhoodFreqs, neighborhood_freqs_repr)
     yaml.add_representer(FreqValue, freq_value_repr)
-    yaml.add_representer(Assembly, assembly_repr)
+    #yaml.add_representer(Assembly, assembly_repr)
+    yaml.add_representer(assembly_pb2.AssemblyDataReport, assembly_report_repr)
     yaml.add_representer(Neighbors, neighbors_repr)
     yaml.add_representer(Gene, gene_repr)
 
@@ -362,8 +372,8 @@ class ThisApp:
                                 sort_attribute_values=True
                             )
                             found_gene = extract_genes(db, gene)
-                            found_gene.assm.assm_acc = assm_acc
-                            found_gene.assm.tax_id = report.tax_id
+                            found_gene.assm_acc = assm_acc
+                            found_gene.assm_report = report
                             self.freqs.add_terms(found_gene.get_neighborhood())
                             fout1.write(str(found_gene.gene))
                             self.neighbor_report.neighbors.append(found_gene)
