@@ -16,7 +16,7 @@ import ncbi.datasets
 from ncbi.datasets.v1alpha1 import dataset_catalog_pb2
 
 
-def retrieve_data_catalog(zip_in):
+def retrieve_data_catalog(zip_in) -> dataset_catalog_pb2.Catalog:
     catalog_json = zip_in.read('ncbi_dataset/data/dataset_catalog.json')
     return json_format.Parse(catalog_json, dataset_catalog_pb2.Catalog())
 
