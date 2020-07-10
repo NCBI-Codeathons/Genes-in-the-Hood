@@ -2,7 +2,6 @@ import argparse
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from enum import Enum, unique, auto
-from pprint import PrettyPrinter
 import os
 import tempfile
 from typing import List
@@ -389,9 +388,6 @@ class ThisApp:
             for zip_file in zip_files:
                 self.process_zip_file(zip_file, gene, fout1, fout2)
             fout2.write(yaml.dump(self.neighbor_report))
-        pp = PrettyPrinter()
-        pp.pprint(self.freqs.get_freq_table())
-        pp.pprint(self.freqs.get_global_freqs())
 
 
 if __name__ == '__main__':
