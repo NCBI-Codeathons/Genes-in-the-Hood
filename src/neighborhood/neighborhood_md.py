@@ -38,10 +38,13 @@ class ThisApp:
         return {x['term']: int(10 * (x['freq']/top)) for x in freqs}
 
     def column_levels(self, data):
+        def color(value):
+            return 10 if value == 1.0 else max(int(10 * value), 9)
+
         columns = data['freqs']['columns']
         levels = []
         for column in columns:
-            levels.append({x['term']: int(10 * (x['freq'])) for x in column})
+            levels.append({x['term']: color(x['freq']) for x in column})
         return levels
 
     def write_markdown(self, file_name, data):
