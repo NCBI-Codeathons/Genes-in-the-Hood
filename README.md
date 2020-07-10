@@ -140,8 +140,8 @@ It also put the alignment on the screen. We found 14 hits from 10 assemblies, sa
 @@@@ ADD code here@@@@
 
 @@@@ ADD image of html table here@@@@
-   
 
+[See the results table](https://htmlpreview.github.io/?https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/src/html/hmmsearch.results.html)
 
 
 

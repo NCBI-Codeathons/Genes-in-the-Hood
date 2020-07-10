@@ -1,11 +1,3 @@
-<style>
-table td {
-	margin: 0;
-	padding: 0;
-}
-</style>
-
-
 # Genes in the (cas9) Hood
 
 The shading level indicates frequency of the gene at that position relative to cas9.
