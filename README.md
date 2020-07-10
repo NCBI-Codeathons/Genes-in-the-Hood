@@ -21,13 +21,13 @@ The CRISPR-Cas9 system also has applications in basic research, and in biotechno
 
 - Gammaproteobacteria - diverse 
 
-- human pathogens – E. coli, Salmonella
+    - human pathogens – E. coli, Salmonella
 
-- plant pathogens – Pseudomanas, Xanthomonas
+    - plant pathogens – Pseudomanas, Xanthomonas
 
-- photoautotrophs – purple sulfur bacteria
+    - photoautotrophs – purple sulfur bacteria
 
-- methane oxidizers – Methylococcus
+    - methane oxidizers – Methylococcus
 
 
 
