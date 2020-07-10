@@ -15,19 +15,19 @@ Cas proteins use CRISPR sequences as guides to recognize and cleave specific str
 
 The CRISPR-Cas9 system also has applications in basic research, and in biotechnology, including genome editing for treatment of genetic disorders. 
    
-## Taxonomy 
+## Gammaproteobacteria
 
-- Taxonomy rank: Class
+Diverse group of bacteria
 
-- Gammaproteobacteria - diverse 
+- Taxonomy rank: Class (txid 1236; NCBI BLAST name: g-proteobacteria)
 
-- human pathogens – E. coli, Salmonella
+- human pathogens – _E. coli_, _Salmonella_
 
-- plant pathogens – Pseudomanas, Xanthomonas
+- plant pathogens – _Pseudomanas_, _Xanthomonas_
 
 - photoautotrophs – purple sulfur bacteria
 
-- methane oxidizers – Methylococcus
+- methane oxidizers – _Methylococcus_
 
 
 
@@ -175,12 +175,32 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 #### ORFfinder/hmmsearch
 
+- genomic sequence -> ORFfinder -> ORF protein fasta  
+   cutoff: 100 aa  
+   limited to ATG start codon
+
+- alignment of HMM profile to proteins   
+   hmmsearch <hmmlist>  <ORF protein fasta>  
+   
+- HMM profiles used to name **cas9**  
+   [TIGR01865](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/evidence/TIGR01865/): type II CRISPR RNA-guided endonuclease **Cas9**  
+   [TIGR03031](https://www.ncbi.nlm.nih.gov/genome/annotation_prok/evidence/TIGR03031/): type II-B CRISPR-associated RNA-guided endonuclease **Cas9**/Csx12
+
+- hmmsearch alignment filtered using cutoff e value for match <1e-20 
+
+- matched ORFs mapped back to genome location 
+
+- output table with feature information from gff file
+
+
+
+
+
 @@@@ ADD COMMANDS here @@@@
 
-* TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
-* TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
 
-@@@@ ADD image of html table here@@@@
+
+@@@@ ADD image of html table here @@@@
    
 
 
