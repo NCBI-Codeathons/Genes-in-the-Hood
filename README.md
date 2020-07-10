@@ -1,4 +1,4 @@
-# Antiphage CRISPR-Cas defense system in gamma-protobacterial genomes: Identify Cas9 proteins and their gene neighboorhood 
+# Antiphage CRISPR-Cas defense system in gamma-protobacterial genomes: Identify Cas9 proteins and their gene neighborhood 
 
 Vinita Joardar, Peter Meric, Ray Anderson, Jianli Dai, Wayne Matten, Greg Schuler
 
@@ -11,18 +11,43 @@ Bacteriophages (phages) are viruses that infect bacteria. There are multiple ant
    This is a specialized region of the bacterial genome that contains repeats and spacers. The spacers consist of virus sequences from previous phage infections that are used to recognize future attacks 
 - Cas (**C**RISPR-**as**sociated) proteins  
 
-   Cas proteins use CRISPR sequences as guides to recognize and cleave specific strands of virus DNA. Cas9 is an endonuclease (cleaves internal bonds in DNA) that causes site-directed double-stranded breaks.    
+Cas proteins use CRISPR sequences as guides to recognize and cleave specific strands of virus DNA. Cas9 is an endonuclease (cleaves internal bonds in DNA) that causes site-directed double-stranded breaks.    
 
-The CRISPR-Cas9 system also has applications in basic research, and in biotechnology, including genome editing for treatment of genetic disorders.  
+The CRISPR-Cas9 system also has applications in basic research, and in biotechnology, including genome editing for treatment of genetic disorders. 
+   
+## Taxonomy 
+
+- Taxonomy rank: Class
+
+- Gammaproteobacteria - diverse 
+
+- human pathogens – E. coli, Salmonella
+
+- plant pathogens – Pseudomanas, Xanthomonas
+
+- photoautotrophs – purple sulfur bacteria
+
+- methane oxidizers – Methylococcus
+
+
+
+ 
 
 ## Hypothetical user story 
-A research group would like to identify Cas9 and Cas9-like proteins in gammaproteobacterial genomes, and download genes in the neighborhood of Cas9. They start their search with the gene symbol “cas9” with the goal of finding and downloading
+A research group would like to identify **Cas9** and Cas9-like proteins in gammaproteobacterial genomes, and download genes in the neighborhood of Cas9. They start their search with the gene symbol “cas9” with the goal of finding and downloading
 - protein FASTA files for annotated cas9 genes (e.g., WP_ proteins in RefSeq) in gammaproteobacteria (taxonomic rank = Class; txid 1236; NCBI BLAST name: g-proteobacteria)
+
 - protein FASTA files for unannotated cas9-like proteins (similar proteins without symbols or informative names)
+
 - protein FASTA for genes in the neighborhood of cas9 (10 genes on each side)
+
 - GO (Gene Ontology) terms associated with neighboring genes  
 
 How many of the neighborhoods are unique? Can they be classified and made non-redundant?
+
+
+
+
 
 
 ## The Project
@@ -94,10 +119,33 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
 
+in `/usr/local/data/testset-1`
+   
+`cat *.HMM > TIGR0_combined.HMM`
+
+`hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
+
+      input files:
+   
+      TIGR0_combined.HMM --the profile
+   
+      orf.10.test.out --the orf generated from orf-finder
+   
+      output file:
+   
+      orf.10_TIGR0_com_HMMsearch --the tabulated hmmsearch output
+   
+It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
+
+
+
+
+
 
 
 ## Methods and Results
 ### Assembly download and classification
+
 
 The NCBI Datasets command-line tool was used to download all available reference assemblies within the clade for gamaproteobacteria (tax ID 1236).  In total this amounted to 79,802 datasets.                  
 
@@ -127,27 +175,70 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 #### ORFfinder/hmmsearch
 
+@@@@ ADD COMMANDS here @@@@
+
 * TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
 * TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
 
+@@@@ ADD image of html table here@@@@
    
-in `/usr/local/data/testset-1`
-   
-`cat *.HMM > TIGR0_combined.HMM`
 
-`hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
 
-      input files:
+
+
+
+
+
+
+
+### Neighborhood analysis
+
+- 10 genes on either side of cas9
+
+@@@@ ADD methods here @@@@
+
+
+- Cas proteins cas1, cas2 and cas4 are clustered with cas9   
+   cas1 - function
+   cas2 -  
+   cas4 - 
    
-      TIGR0_combined.HMM --the profile
-   
-      orf.10.test.out --the orf generated from orf-finder
-   
-      output file:
-   
-      orf.10_TIGR0_com_HMMsearch --the tabulated hmmsearch output
-   
-It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
+- @@@@ any other genes common to the neighboorhood? @@@@
+
+
+
+@@@@ ADD image of table here @@@@
+
+
+@@@@ ADD image of heat map @@@@
+
+
+### Conclusions
+
+#### Output for the user
+
+- FASTA file of cas9 proteins (WP accessions)
+
+- html table with results of hmmsearch
+
+- table of gene neighboorhood
+
+- Heat map of the gene neighboorhood
+
+- 
+
+
+
+#### Feedback for the Datasets team
+
+- issues with downloading assemblies
+
+- users are interested in GO (Gene Ontology) annotation
+
+
+
+
+
 
 
 
