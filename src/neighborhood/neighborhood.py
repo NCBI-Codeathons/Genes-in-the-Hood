@@ -14,6 +14,19 @@ import gffutils
 from google.protobuf import json_format
 import ncbi.datasets
 from ncbi.datasets.v1alpha1 import dataset_catalog_pb2
+from ncbi.datasets.v1alpha1.reports import assembly_pb2
+from ncbi.datasets.reports.report_reader import DatasetsReportReader
+
+
+def retrieve_assembly_report(zip_in, catalog) -> assembly_pb2.AssemblyDataReport:
+    report_files = get_files(catalog, dataset_catalog_pb2.File.FileType.DATA_REPORT)
+    if not report_files:
+        return None
+    for assm_acc, files in report_files.items():
+        for fname in files:
+            yaml = zip_in.read(fname)
+            rpt_rdr = DatasetsReportReader()
+            return rpt_rdr.assembly_report(yaml)
 
 
 def retrieve_data_catalog(zip_in) -> dataset_catalog_pb2.Catalog:
@@ -21,9 +34,7 @@ def retrieve_data_catalog(zip_in) -> dataset_catalog_pb2.Catalog:
     return json_format.Parse(catalog_json, dataset_catalog_pb2.Catalog())
 
 
-# Temporary hack to support GENOMIC_NUCLEOTIDE_FASTA & PROTEIN_FASTA 
-# which will be present in the next release
-def get_file_list(data_catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType):
+def get_files(data_catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType):
     files = defaultdict(list)
     for assm in data_catalog.assemblies:
         acc = assm.accession
@@ -254,9 +265,10 @@ class ThisApp:
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
                 catalog = retrieve_data_catalog(zin)
-                gff_files = get_file_list(catalog, dataset_catalog_pb2.File.FileType.GFF3)
+                report = retrieve_assembly_report(zin, catalog)
+                gff_files = get_files(catalog, dataset_catalog_pb2.File.FileType.GFF3)
                 for assm_acc, gff_files in gff_files.items():
-                    print(f'processing assembly {assm_acc}')
+                    print(f'processing assembly {assm_acc} for {report.species_name} {report.strain}')
                     for fname in gff_files:
                         with tempfile.NamedTemporaryFile() as tmpfile:
                             tmpfile.write(zin.read(fname))
@@ -270,7 +282,7 @@ class ThisApp:
                             )
                             found_gene = extract_genes(db, gene)
                             found_gene.assm.assm_acc = assm_acc
-                            found_gene.assm.tax_id = 1236
+                            found_gene.assm.tax_id = report.tax_id
                             self.freqs.add_terms(found_gene.get_neighborhood())
                             fout1.write(str(found_gene.gene))
                             fout2.write(found_gene.to_text())
