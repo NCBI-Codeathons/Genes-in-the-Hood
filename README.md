@@ -119,7 +119,7 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
 
-`hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
+    `hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
 
   * input files
     - `TIGR0_combined.HMM` &mdash; the set of HMM profiles
