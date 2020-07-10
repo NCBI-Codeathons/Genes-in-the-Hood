@@ -217,13 +217,17 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 - 10 genes on either side of cas9
 
-@@@@ ADD methods here @@@@
+@@@@ ADD methods here @@@@  
+
+- frequency of top 10 genes in the neighborhood
+
+
 
 
 - Cas proteins cas1, cas2 and cas4 are clustered with cas9   
-   cas1 - function
-   cas2 -  
-   cas4 - 
+   cas1 - endonuclease  
+   cas2 - spacer acquisition   
+   cas4 - capture of new viral DNA sequences
    
 - @@@@ any other genes common to the neighboorhood? @@@@
 
