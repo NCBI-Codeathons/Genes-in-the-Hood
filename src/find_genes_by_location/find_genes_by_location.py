@@ -69,7 +69,7 @@ class Gene:
     protein_accession: str = ""
 
     def get_fields(self):
-        return [self.chrom, self.feat_type, self.name, self.range_start, self.range_stop, self.protein_accession]
+        return [self.feat_type, self.name, self.range_start, self.range_stop, self.protein_accession]
 
     def name_val(self):
         return self.protein_accession if self.protein_accession else self.name
