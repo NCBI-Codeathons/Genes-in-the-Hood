@@ -130,8 +130,9 @@ class Neighbors:
 
 
 class NeighborhoodFreqs:
-    def __init__(self, size=21):
+    def __init__(self, upstream_count=10, downstream_count=10):
         self.all_freqs = Freqs()
+        size = upstream_count + downstream_count + 1
         self.freqs = [Freqs() for n in range(size)]
 
     def add_terms(self, terms):
