@@ -260,11 +260,10 @@ class ThisApp:
     def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
-        window = self.args.window
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
-            for zip_file in zip_files[:4]:
+            for zip_file in zip_files:
                 self.process_zip_file(zip_file, gene, fout1, fout2)
         pp = PrettyPrinter()
         pp.pprint(self.freqs.get_freq_table())
