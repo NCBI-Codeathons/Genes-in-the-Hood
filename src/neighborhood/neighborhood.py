@@ -57,13 +57,6 @@ def get_zip_files_for_accs(accs, path):
 def get_zip_files(accfile_path, path):
     with open(accfile_path, 'r') as accfile:
         return get_zip_files_for_accs([acc.rstrip('\n') for acc in accfile], path)
-    return None
-
-
-def get_all_files(path):
-    for root, dirs, files in os.walk(path):
-        zip_files.extend([os.path.join(root, x) for x in files if x.endswith('.zip')])
-    return zip_files
 
 
 @dataclass
@@ -163,9 +156,7 @@ class Freqs(Counter):
 
 
 def extract_genes(gff3_db, desired_gene):
-    neighbors = []
     gene_neighborhood = None
-    found_gene = None
     genes_by_chrom = defaultdict(list)
 
     for feat_type in ['gene', 'pseudogene']:
@@ -206,31 +197,6 @@ def get_neighborhood_by_count(neighborhood, genes, count):
         if idx_stop >= len(sorted_genes):
             idx_stop = len(sorted_genes) - 1
         neighborhood.downstream = sorted_genes[idx + 1:idx_stop]
-
-
-def get_neighborhood_by_pos(genes, seq, lo, hi):
-    # TODO: here we want to feed gff_lines into gffutils.create_db()
-    # not sure if it needs to be on disk or if we can use io.StringIO
-
-    # Doing something quick-and-dirty for now
-    genes = []
-    for line in gff_lines:
-        col = line.split('\t')
-        if col[0] == seq:
-            pos1, pos2, gene_type = int(col[3]), int(col[4]), col[2]
-            if gene_type in ('gene', 'pseudogene') and (pos1 in range(lo, hi) or pos2 in range(lo, hi)):
-                attr = col9_attributes(col[8])
-                gene = attr.get('gene') or attr.get('product') or attr.get('Name') or attr.get('locus_tag')
-                if gene_type == 'pseudogene':
-                    gene += '(ps)'
-                genes.append(gene)
-    return '-'.join(genes)
-
-
-def col9_attributes(col_9):
-    parts = [x.split('=') for x in col_9.split(';')]
-    return {x: y for (x, y) in parts}
-
 
 
 class ThisApp:
@@ -274,7 +240,7 @@ class ThisApp:
                             tmpfile.write(zin.read(fname))
                             db = gffutils.create_db(
                                 tmpfile.name,
-                                dbfn = ':memory:',
+                                dbfn=':memory:',
                                 force=True,
                                 keep_order=True,
                                 merge_strategy='merge',
@@ -286,7 +252,6 @@ class ThisApp:
                             self.freqs.add_terms(found_gene.get_neighborhood())
                             fout1.write(str(found_gene.gene))
                             fout2.write(found_gene.to_text())
-                            # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
             fout1.write('--ERROR--')
