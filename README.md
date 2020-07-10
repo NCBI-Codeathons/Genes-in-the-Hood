@@ -126,14 +126,11 @@ in `/usr/local/data/testset-1`
 `hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
 
       input files:
-   
-      TIGR0_combined.HMM --the profile
-   
-      orf.10.test.out --the orf generated from orf-finder
+        `TIGR0_combined.HMM` &mdash; the profile
+        `orf.10.test.out` &mdash; the orf generated from orf-finder
    
       output file:
-   
-      orf.10_TIGR0_com_HMMsearch --the tabulated hmmsearch output
+        `orf.10_TIGR0_com_HMMsearch` &mdash; the tabulated hmmsearch output
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
 
@@ -177,7 +174,7 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 @@@@ ADD COMMANDS here @@@@
 
-`$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
+`ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
 Downloaded the cas9 HMM profile from https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/.
 * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
@@ -187,7 +184,7 @@ Concatanated the HMM profiles.
 
 `cat *.HMM > TIGR0_combined2.HMM`
 
-For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100 AAs) and then used hmmsearch to find cas9 homologs.
+For each downloaded assembly, we used `ORFfinder` to translate all the ORFs (>=100 AAs) and then used `hmmsearch` to find cas9 homologs.
 
 @@@@ ADD code here@@@@
 
@@ -239,7 +236,7 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 #### Output for the user
 
 - FASTA file of cas9 proteins (WP accessions)
-- html table with results of hmmsearch
+- html table with results of `hmmsearch`
 - table of gene neighboorhood
 - Heat map of the gene neighboorhood
 
