@@ -115,7 +115,9 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * extract list of WP accessions
 
-* retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) (done)
+* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/).
+  * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
+  * [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
 
@@ -170,17 +172,11 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 @@@@ ADD COMMANDS here @@@@
 
-`ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
+* For each assembly, find putative ORFs of at least 300 basepairs...
 
-Downloaded the cas9 HMM profile from https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/.
-* [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
-* [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
+  `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
-Concatanated the HMM profiles.
-
-`cat *.HMM > TIGR0_combined2.HMM`
-
-For each downloaded assembly, we used `ORFfinder` to translate all the ORFs (>=100 AAs) and then used `hmmsearch` to find cas9 homologs.
+* For each downloaded assembly, we used `ORFfinder` to translate all the ORFs (>=100 AAs) and then used `hmmsearch` to find cas9 homologs.
 
 @@@@ ADD code here@@@@
 
