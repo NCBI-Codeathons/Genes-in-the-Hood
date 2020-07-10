@@ -65,7 +65,7 @@ class Gene:
     strand: str
     range_start: int
     range_stop: int
-    protein_accession: str = None
+    protein_accession: str = ""
 
     def __str__(self):
         return f'{self.chrom}\t{self.feat_type}\t{self.name}\t{self.range_start}\t{self.range_stop}\t{self.protein_accession}'
@@ -79,7 +79,7 @@ def find_genes_by_loc(gff3_db, seq_acc, start, stop):
     feat_types = ('gene', 'pseudogene')
     for gene in gff3_db.region(seqid=seq_acc, start=start, end=stop, featuretype=feat_types, completely_within=False):
         gene_name = gene.attributes.get('Name', None)[0]
-        prot_acc = None
+        prot_acc = ""
         if gene.attributes['gene_biotype'][0] == 'protein_coding':
             cds = list(gff3_db.children(gene, featuretype='CDS'))
             prot_acc = cds[0].attributes.get('protein_id', None)[0]
