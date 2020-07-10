@@ -55,13 +55,13 @@ class ThisApp:
             print(f'Writing file {file_name} ...')
 
             fout.write('# Genes in the (cas9) Hood\n\n')
-            fout.write('The shading level indicates frequency of the gene at that position relative to cas9.\n\n')
+            fout.write('The shading level indicates global frequency of the gene in the cas9 neighborhood.\n\n')
 
             fout.write('|   |   |   |   |   |   |   |   |   |   | 0 |   |   |   |   |   |   |   |   |   |   |\n')
             fout.write('|---|---|---|---|---|---|---|---|---|---|----|---|---|---|---|---|---|---|---|---|---|\n')
 
-            levels = self.global_levels(data)
-            # levels = self.column_levels(data)
+            # levels = self.global_levels(data)
+            levels = self.column_levels(data)
             rows = self.table_rows(data)
             for row in rows:
                 for i in range(21):
