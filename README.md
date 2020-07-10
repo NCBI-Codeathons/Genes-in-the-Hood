@@ -150,18 +150,12 @@ It also put the alignment on the screen. We found 14 hits from 10 assemblies, sa
 
 ### Neighborhood analysis
 
-- 10 genes on either side of cas9
+Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
 
-@@@@ ADD methods here @@@@
-
-
-- Cas proteins cas1, cas2 and cas4 are clustered with cas9   
-   cas1 - endonuclease
-   cas2 - spacer acquistion in CRISPR array 
-   cas4 - exonuclease; capture of new viral DNA sequences  
-   
-   
-- @@@@ any other genes common to the neighboorhood? @@@@
+- Cas proteins `cas1`, `cas2` and `cas4` are clustered with `cas9`
+   * `cas1` &mdash; endonuclease
+   * `cas2` &mdash; spacer acquistion in CRISPR array 
+   * `cas4` &mdash; exonuclease; capture of new viral DNA sequences  
 
 
 #### Heat maps depicting relative frequency of genes/proteins
@@ -169,7 +163,6 @@ It also put the alignment on the screen. We found 14 hits from 10 assemblies, sa
 [Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
 
 [Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
-
 
 
 #### Top 10 occurring genes/proteins
