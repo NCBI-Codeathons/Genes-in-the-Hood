@@ -60,8 +60,8 @@ class ThisApp:
             fout.write('|   |   |   |   |   |   |   |   |   |   | 0 |   |   |   |   |   |   |   |   |   |   |\n')
             fout.write('|---|---|---|---|---|---|---|---|---|---|----|---|---|---|---|---|---|---|---|---|---|\n')
 
-            # levels = self.global_levels(data)
-            levels = self.column_levels(data)
+            levels = self.global_levels(data)
+            # levels = self.column_levels(data)
             rows = self.table_rows(data)
             for row in rows:
                 for i in range(21):
