@@ -115,11 +115,18 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 #### ORFfinder/hmmsearch
 
-@@@@ ADD COMMANDS here @@@@
 
-* For each assembly, find putative ORFs of at least 300 basepairs...
+* For each assembly, find putative ORFs of at least 300 basepairs
 
   `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
+  
+  where:
+
+   `-g 11` &mdash; The Bacterial, Archaeal and Plant Plastid Code
+   
+   `-s 0`  &mdash; use ATG only for the ORF start codon
+   
+   `-n t`  &mdash; Ignore nested ORFs (completely placed within another)
 
 * retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/).
   * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) &mdash; type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
@@ -175,10 +182,10 @@ Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
 
 #### Output for the user
 
-- FASTA file of cas9 proteins (WP accessions)
 - html table with results of `hmmsearch`
-- table of gene neighboorhood
-- Heat map of the gene neighboorhood
+- heat map of the gene neighborhood
+- table of gene neighborhood
+- _pending_: FASTA file of `cas9` proteins (WP accessions)
 
 
 #### Feedback for the Datasets team
