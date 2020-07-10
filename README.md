@@ -21,13 +21,13 @@ The CRISPR-Cas9 system also has applications in basic research, and in biotechno
 
 - Gammaproteobacteria - diverse 
 
-- human pathogens – E. coli, Salmonella
+    - human pathogens – E. coli, Salmonella
 
-- plant pathogens – Pseudomanas, Xanthomonas
+    - plant pathogens – Pseudomanas, Xanthomonas
 
-- photoautotrophs – purple sulfur bacteria
+    - photoautotrophs – purple sulfur bacteria
 
-- methane oxidizers – Methylococcus
+    - methane oxidizers – Methylococcus
 
 
 
@@ -50,9 +50,9 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 
 
-## The Project
+## Project Overview
 
-### (A) Retrieve g-proteobacteria assemblies
+### (A) Assembly download and classification
 (i)  retrieve assemblies with GFF, genomic and protein sequences
 
 (ii) find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
@@ -60,27 +60,10 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 (iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
-### (B) Use cas9 protein/HMM profile sequence to look for similar proteins but without the cas9 symbol
-(i) rpstblastn using cas9 HMM profiles (TIGR03031 and TIGR01865)
+### (B) Identify unannotated Cas9 proteins
+(i) test a few methods
 
-* build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
-
-* extract cas9 protein sequences into a single `cas9.faa`
-
-* retrieve TIGRFAM profiles, build BLAST profile db
-
-* execute rpstblastn with the genomic g-proteobacteria sequences
-
-
-(ii) tblastn using cas9 proteins
-
-* build a cas9 protein query set &mdash; a subset of `cas9.faa`
-
-* execute tblastn with the `cas9_filtered.faa` protein query set
-
-* create a protein profile for known cas9 proteins, use hmmer?
-  * domain-based search using rpsblast
-    * look into use of tigrfam as input to makeprofiledb
+(ii) settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
 
 
 ### (C) Neighborhood analysis
@@ -115,25 +98,20 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * extract list of WP accessions
 
-* retrieve TIGRFAM ids associated with WPs, allowing for retrieval of [HMM models](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) (done)
+* retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/).
+  * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
+  * [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
 
-in `/usr/local/data/testset-1`
-   
-`cat *.HMM > TIGR0_combined.HMM`
+    `hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
 
-`hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
-
-      input files:
+  * input files
+    - `TIGR0_combined.HMM` &mdash; the set of HMM profiles
+    - `orf.10.test.out` &mdash; the orf generated from orf-finder
    
-      TIGR0_combined.HMM --the profile
-   
-      orf.10.test.out --the orf generated from orf-finder
-   
-      output file:
-   
-      orf.10_TIGR0_com_HMMsearch --the tabulated hmmsearch output
+  * output file
+    - `orf.10_TIGR0_com_HMMsearch` &mdash; the tabulated hmmsearch output
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
 
@@ -177,24 +155,16 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 @@@@ ADD COMMANDS here @@@@
 
-`$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
+* For each assembly, find putative ORFs of at least 300 basepairs...
 
-Downloaded the cas9 HMM profile from https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/.
-* [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
-* [TIGR01865](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR01865.1.HMM) - type II CRISPR RNA-guided endonuclease Cas9
+  `ORFfinder -in genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
-Concatanated the HMM profiles.
-
-`cat *.HMM > TIGR0_combined2.HMM`
-
-For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100 AAs) and then used hmmsearch to find cas9 homologs.
+* For each downloaded assembly, we used `ORFfinder` to translate all the ORFs (>=100 AAs) and then used `hmmsearch` to find cas9 homologs.
 
 @@@@ ADD code here@@@@
 
 @@@@ ADD image of html table here@@@@
    
-
-
 
 
 
@@ -210,9 +180,10 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 
 
 - Cas proteins cas1, cas2 and cas4 are clustered with cas9   
-   cas1 - function
-   cas2 -  
-   cas4 - 
+   cas1 - endonuclease
+   cas2 - spacer acquistion in CRISPR array 
+   cas4 - exonuclease; capture of new viral DNA sequences  
+   
    
 - @@@@ any other genes common to the neighboorhood? @@@@
 
@@ -223,27 +194,33 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 
 @@@@ ADD image of heat map @@@@
 
+#### Top 10 occurring genes/proteins
+
+- cas9
+- WP_003016533.1
+- WP_003016538.1
+- WP_003016535.1
+- WP_003016544.1
+- WP_003019268.1
+- WP_003016518.1
+- WP_003016545.1
+- WP_003016540.1
+- WP_003016537.1
+
 
 ### Conclusions
 
 #### Output for the user
 
 - FASTA file of cas9 proteins (WP accessions)
-
-- html table with results of hmmsearch
-
+- html table with results of `hmmsearch`
 - table of gene neighboorhood
-
 - Heat map of the gene neighboorhood
-
-- 
-
 
 
 #### Feedback for the Datasets team
 
 - issues with downloading assemblies
-
 - users are interested in GO (Gene Ontology) annotation
 
 
