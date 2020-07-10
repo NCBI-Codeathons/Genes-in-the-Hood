@@ -105,10 +105,10 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 #### Methods evaluated on a test set
 
 * `tblastn` &mdash; protein query vs. translated nucleotide database
-* `rpstblastn` &mdash; genomic sequence vs. db of HMM profiles
-* `ORFfinder` and HMM profiles &mdash; for protein query
-* `rpsblast`
-* `hmmsearch` &mdash;
+* `rpsblast` &mdash; protein sequence vs database of HMM profiles
+* `rpstblastn` &mdash; genomic sequence vs. database of HMM profiles
+* `ORFfinder` &mdash; to generate putative protein sequences
+* `hmmsearch` &mdash; search HMM profile(s) against a sequence database
 
 `hmmsearch` plus `ORFfinder` was deemed the fastest and with sufficient sensitivity. Therefore it was chosen for this `cas9` discovery work.
 
