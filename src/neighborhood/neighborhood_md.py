@@ -4,7 +4,7 @@ import yaml
 
 class ThisApp:
     infile = os.path.join('data', 'cas9_neighborhood.yaml')
-    outfile = 'cas9-column-freqs.md'
+    outfile = 'cas9-global-freqs.md'
 
     def run(self):
         data = self.read_data(self.infile)
@@ -33,9 +33,12 @@ class ThisApp:
         return rows
 
     def global_levels(self, data):
+        def color(value):
+            return 10 if value == 1.0 else min(int(15 * value), 9)
+
         freqs = data['freqs']['global']
         top = freqs[0]['freq']
-        return {x['term']: int(10 * (x['freq']/top)) for x in freqs}
+        return {x['term']: color(x['freq']/top) for x in freqs}
 
     def column_levels(self, data):
         def color(value):
@@ -57,8 +60,8 @@ class ThisApp:
             fout.write('|   |   |   |   |   |   |   |   |   |   | 0 |   |   |   |   |   |   |   |   |   |   |\n')
             fout.write('|---|---|---|---|---|---|---|---|---|---|----|---|---|---|---|---|---|---|---|---|---|\n')
 
-            # levels = self.global_levels(data)
-            levels = self.column_levels(data)
+            levels = self.global_levels(data)
+            # levels = self.column_levels(data)
             rows = self.table_rows(data)
             for row in rows:
                 for i in range(21):
@@ -73,7 +76,11 @@ class ThisApp:
         name = gene['name']
         if '_' in name:
             name = gene['protein_accession']
-        color = levels[column].get(name, 0) or levels[column].get(gene['protein_accession'], 0)
+        if isinstance(levels, list):
+            color = levels[column].get(name, 0) or levels[column].get(gene['protein_accession'], 0)
+        else:
+            color = levels.get(name, 0) or levels.get(gene['protein_accession'], 0)
+
         image = f'c{color}.png'
         return f'| ![alt text](img/{image} "{name}") '
 
