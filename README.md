@@ -150,9 +150,8 @@ clustered with `cas9`
 
 #### Heat maps depicting relative frequency of genes/proteins
 
-[Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
-
-[Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
+* [Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
+* [Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
 
 
 #### Top 10 occurring genes/proteins
