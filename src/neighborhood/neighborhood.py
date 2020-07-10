@@ -65,13 +65,6 @@ def get_zip_files_for_accs(accs, path):
 def get_zip_files(accfile_path, path):
     with open(accfile_path, 'r') as accfile:
         return get_zip_files_for_accs([acc.rstrip('\n') for acc in accfile], path)
-    return None
-
-
-def get_all_files(path):
-    for root, dirs, files in os.walk(path):
-        zip_files.extend([os.path.join(root, x) for x in files if x.endswith('.zip')])
-    return zip_files
 
 
 @dataclass
@@ -181,9 +174,7 @@ class NeighborhoodReport:
 
 
 def extract_genes(gff3_db, desired_gene):
-    neighbors = []
     gene_neighborhood = None
-    found_gene = None
     genes_by_chrom = defaultdict(list)
 
     for feat_type in ['gene', 'pseudogene']:
@@ -364,7 +355,7 @@ class ThisApp:
                             tmpfile.write(zin.read(fname))
                             db = gffutils.create_db(
                                 tmpfile.name,
-                                dbfn = ':memory:',
+                                dbfn=':memory:',
                                 force=True,
                                 keep_order=True,
                                 merge_strategy='merge',
@@ -385,7 +376,6 @@ class ThisApp:
     def process_zip_files(self, zip_files, accessions=None):
         print(f'Processing {len(zip_files)} assemblies ...')
         gene = self.args.gene
-        window = self.args.window
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
