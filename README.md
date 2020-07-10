@@ -53,31 +53,23 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 ## Project Overview
 
 ### (A) Assembly download and classification
-(i)  retrieve assemblies with GFF, genomic and protein sequences
-
-(ii) find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
-
-(iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
+*  retrieve assemblies with GFF, genomic and protein sequences
+* find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
+* identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
 ### (B) Identify unannotated Cas9 proteins
-(i) test a few methods
-
-(ii) settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
+* test a few methods
+* settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
 
 
 ### (C) Neighborhood analysis
 
 * for genes upstream / downstream of cas9 (from A ii), are there any patterns?
-
 * For non-cas genes, characterize:  domain structure, GO terms?
-
 * cas genes clustered in the neighborhood - Cas1, Cas2, Cas4
-
 * Other cas-related genes?
-
 * neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
-
 * 10 genes on either side vs. 10 kb
 
 
@@ -149,9 +141,8 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 ### Neighborhood analysis
 
-Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
-
-- Cas proteins `cas1`, `cas2` and `cas4` are clustered with `cas9`
+Extract and present 10 genes on either side of cas9. Identify patterns, if any. For example, Cas proteins `cas1`, `cas2` and `cas4` are often found
+clustered with `cas9`
    * `cas1` &mdash; endonuclease
    * `cas2` &mdash; spacer acquistion in CRISPR array 
    * `cas4` &mdash; exonuclease; capture of new viral DNA sequences  
@@ -159,9 +150,8 @@ Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
 
 #### Heat maps depicting relative frequency of genes/proteins
 
-[Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
-
-[Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
+* [Global gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-global-freqs.md)
+* [Column-based gene frequency](https://github.com/NCBI-Codeathons/Genes-in-the-Hood/blob/main/cas9-column-freqs.md)
 
 
 #### Top 10 occurring genes/proteins
