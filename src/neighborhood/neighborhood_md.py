@@ -4,7 +4,7 @@ import yaml
 
 class ThisApp:
     infile = os.path.join('data', 'cas9_neighborhood.yaml')
-    outfile = 'cas9-global-freqs.md'
+    outfile = 'cas9-column-freqs.md'
 
     def run(self):
         data = self.read_data(self.infile)
@@ -27,6 +27,8 @@ class ThisApp:
                   + [None for x in range(10 - len(hood['downstream']))]
             if len(row) != 21:
                 raise RuntimeError()
+            if row[10]['name'] != 'cas9':
+                raise RuntimeError('cas9 should be in the middle')
             rows.append(row)
         return rows
 
@@ -35,17 +37,25 @@ class ThisApp:
         top = freqs[0]['freq']
         return {x['term']: int(10 * (x['freq']/top)) for x in freqs}
 
+    def column_levels(self, data):
+        columns = data['freqs']['columns']
+        levels = []
+        for column in columns:
+            levels.append({x['term']: int(10 * (x['freq'])) for x in column})
+        return levels
+
     def write_markdown(self, file_name, data):
         with open(file_name, 'w') as fout:
             print(f'Writing file {file_name} ...')
 
             fout.write('# Genes in the (cas9) Hood\n\n')
-            fout.write('The shading level indicates the global frequency in the cas9 gene neighborhood.\n\n')
+            fout.write('The shading level indicates frequency of the gene at that position relative to cas9.\n\n')
 
             fout.write('|   |   |   |   |   |   |   |   |   |   | 0 |   |   |   |   |   |   |   |   |   |   |\n')
             fout.write('|---|---|---|---|---|---|---|---|---|---|----|---|---|---|---|---|---|---|---|---|---|\n')
 
-            levels = self.global_levels(data)
+            # levels = self.global_levels(data)
+            levels = self.column_levels(data)
             rows = self.table_rows(data)
             for row in rows:
                 for i in range(21):
@@ -58,7 +68,7 @@ class ThisApp:
         # GitHub won't show an md file if it is too big.  Adding the link puts it over the limit.
         # link = f'https://www.ncbi.nlm.nih.gov/protein/'
         name = gene['name']
-        color = levels.get(name, 0) or levels.get(gene['protein_accession'], 0)
+        color = levels[column].get(name, 0) or levels[column].get(gene['protein_accession'], 0)
         image = f'c{color}.png'
         return f'| ![alt text](img/{image} "{name}") '
 
