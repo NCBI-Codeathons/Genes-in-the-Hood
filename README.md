@@ -119,18 +119,14 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 * hmmer search using cas9 HMM profiles vs genomic nucleotide sequence
 
-in `/usr/local/data/testset-1`
-   
-`cat *.HMM > TIGR0_combined.HMM`
-
 `hmmsearch --tblout orf.10_TIGR0_com_HMMsearch TIGR0_combined.HMM orf.10.test.out`
 
-* input files
-  - `TIGR0_combined.HMM` &mdash; the profile
-  - `orf.10.test.out` &mdash; the orf generated from orf-finder
+  * input files
+    - `TIGR0_combined.HMM` &mdash; the set of HMM profiles
+    - `orf.10.test.out` &mdash; the orf generated from orf-finder
    
-* output file
-  - `orf.10_TIGR0_com_HMMsearch` &mdash; the tabulated hmmsearch output
+  * output file
+    - `orf.10_TIGR0_com_HMMsearch` &mdash; the tabulated hmmsearch output
    
 It also put the alignment on the screen. We found 14 hits from 10 assemblies, same as that form rpsblast. We found at least one cas9 pseudogene ([ORF1616_NC_007880.1:1261533:1259074](https://www.ncbi.nlm.nih.gov/nuccore/NC_007880.1?report=genbank&from=1258761&to=1263689) annotated as frameshifted cas9 pseudogene, no aa sequence in the downloaded assembly protein.faa).
 
