@@ -53,31 +53,23 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 ## Project Overview
 
 ### (A) Assembly download and classification
-(i)  retrieve assemblies with GFF, genomic and protein sequences
-
-(ii) find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
-
-(iii) identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
+*  retrieve assemblies with GFF, genomic and protein sequences
+* find cas9 genes and the gene neighborhood (10 genes upstream/downstream)
+* identify/classify genome as "having cas9" vs "without cas9" (based on the symbol "cas9")
 
 
 ### (B) Identify unannotated Cas9 proteins
-(i) test a few methods
-
-(ii) settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
+* test a few methods
+* settled on running ORFfinder on the genomic.fna files, then passing that to hmmsearch
 
 
 ### (C) Neighborhood analysis
 
 * for genes upstream / downstream of cas9 (from A ii), are there any patterns?
-
 * For non-cas genes, characterize:  domain structure, GO terms?
-
 * cas genes clustered in the neighborhood - Cas1, Cas2, Cas4
-
 * Other cas-related genes?
-
 * neighborhood analysis for test set (tblastn) done - Cas9 is in a cluster with Cas1, Cas2 and Cas4 
-
 * 10 genes on either side vs. 10 kb
 
 
