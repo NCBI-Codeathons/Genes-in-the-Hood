@@ -11,41 +11,26 @@ from typing import List
 import zipfile
 
 import gffutils
+from google.protobuf import json_format
 import ncbi.datasets
 from ncbi.datasets.v1alpha1 import dataset_catalog_pb2
 
 
 def retrieve_data_catalog(zip_in):
-    data_catalog = json.loads(zip_in.read('ncbi_dataset/data/dataset_catalog.json'))
-    # print(f"Catalog found with metadata for {len(data_catalog['assemblies'])} assemblies")
-    return data_catalog
-
-
-def get_assemblies(data_catalog):
-    return [x['accession'] for x in data_catalog['assemblies']]
+    catalog_json = zip_in.read('ncbi_dataset/data/dataset_catalog.json')
+    return json_format.Parse(catalog_json, dataset_catalog_pb2.Catalog())
 
 
 # Temporary hack to support GENOMIC_NUCLEOTIDE_FASTA & PROTEIN_FASTA 
 # which will be present in the next release
-def get_file_list(data_catalog, desired_filetype):
-    desired_filetype = desired_filetype.upper()
-    if desired_filetype not in dataset_catalog_pb2.File.FileType.keys():
-        raise Exception(f'Filetype {desired_filetype} is invalid.')
-    
+def get_file_list(data_catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType):
     files = defaultdict(list)
-    for asm in data_catalog['assemblies']:
-        acc = asm['accession']
-        for f in asm['files']:
-            filepath = os.path.join('ncbi_dataset', 'data', f['filePath'])
-            if f['fileType'] == 'GFF3':
-                if desired_filetype in ('PROTEIN_FASTA') and filepath.endswith('faa'):
-                    files[acc].append(filepath)
-                if desired_filetype in ('GFF3') and filepath.endswith('gff'):
-                    files[acc].append(filepath)
-                continue
-            if f['fileType'] == desired_filetype:
+    for assm in data_catalog.assemblies:
+        acc = assm.accession
+        for f in assm.files:
+            filepath = os.path.join('ncbi_dataset', 'data', f.file_path)
+            if f.file_type == desired_filetype:
                 files[acc].append(filepath)
-        
     return files
 
 
@@ -111,10 +96,17 @@ def justify_vals(vals, size, default_val, justify: Justification = Justification
 
 
 @dataclass
+class Assembly:
+    assm_acc: str = ""
+    tax_id: int = 0
+
+
+@dataclass
 class Neighbors:
     gene: Gene
     upstream: List[Gene] = field(default_factory=list)
     downstream: List[Gene] = field(default_factory=list)
+    assm: Assembly = field(default_factory=Assembly)
 
     def _get_table(self, upstream_count=10, downstream_count=10):
         u = [g.name_val() for g in self.upstream]
@@ -122,11 +114,13 @@ class Neighbors:
         # justify
         u = justify_vals(u, upstream_count, None, Justification.RIGHT)
         d = justify_vals(d, downstream_count, None, Justification.LEFT)
-        return u + [self.gene.name] + d
+        return [*u, self.gene.name, *d]
 
-    def get_neighborhood_as_table(self, upstream_count=10, downstream_count=10):
-        table = self._get_table(upstream_count, downstream_count)
-        return table
+    def get_neighborhood(self, upstream_count=10, downstream_count=10):
+        return self._get_table(upstream_count, downstream_count)
+
+    def to_text(self):
+        return f'{self.assm} -- {self.get_neighborhood()}\n'
 
 
 class NeighborhoodFreqs:
@@ -260,7 +254,7 @@ class ThisApp:
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
                 catalog = retrieve_data_catalog(zin)
-                gff_files = get_file_list(catalog, 'GFF3')
+                gff_files = get_file_list(catalog, dataset_catalog_pb2.File.FileType.GFF3)
                 for assm_acc, gff_files in gff_files.items():
                     print(f'processing assembly {assm_acc}')
                     for fname in gff_files:
@@ -275,11 +269,11 @@ class ThisApp:
                                 sort_attribute_values=True
                             )
                             found_gene = extract_genes(db, gene)
-                            neighbors = found_gene.get_neighborhood_as_table()
-                            self.freqs.add_terms(neighbors)
-                            # print(assm_acc, found_gene, f'neighbor count: {len(upstream)}, {len(downstream)}')
+                            found_gene.assm.assm_acc = assm_acc
+                            found_gene.assm.tax_id = 1236
+                            self.freqs.add_terms(found_gene.get_neighborhood())
                             fout1.write(str(found_gene.gene))
-                            fout2.write(f'{neighbors}\n')
+                            fout2.write(found_gene.to_text())
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
