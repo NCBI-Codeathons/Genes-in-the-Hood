@@ -16,6 +16,20 @@ class ThisApp:
             data = yaml.load(fin)
             return data
 
+    def table_rows(self, data):
+        rows = []
+        hoods = data['neighbors']
+        for hood in hoods:
+            row = [None for x in range(10 - len(hood['upstream']))] \
+                  + hood['upstream'] \
+                  + [hood['gene']] \
+                  + hood['downstream'] \
+                  + [None for x in range(10 - len(hood['downstream']))]
+            if len(row) != 21:
+                raise RuntimeError()
+            rows.append(row)
+        return rows
+
     def global_levels(self, data):
         freqs = data['freqs']['global']
         top = freqs[0]['freq']
@@ -31,23 +45,20 @@ class ThisApp:
             fout.write('|   |   |   |   |   |   |   |   |   |   | 0 |   |   |   |   |   |   |   |   |   |   |\n')
             fout.write('|---|---|---|---|---|---|---|---|---|---|----|---|---|---|---|---|---|---|---|---|---|\n')
 
-            hoods = data['neighbors']
             levels = self.global_levels(data)
-            for hood in hoods:
-                for i in range(10 - len(hood['upstream'])):
-                    fout.write('| ')
-                for gene in hood['upstream']:
-                    fout.write(self.gene_md(gene, levels))
-                fout.write(self.gene_md(hood['gene'], levels))
-                for gene in hood['downstream']:
-                    fout.write(self.gene_md(gene, levels))
+            rows = self.table_rows(data)
+            for row in rows:
+                for i in range(21):
+                    fout.write(self.gene_md(row[i], levels, i))
                 fout.write('|\n')
 
-    def gene_md(self, gene, levels):
+    def gene_md(self, gene, levels, column):
+        if not gene:
+            return '| '
         # GitHub won't show an md file if it is too big.  Adding the link puts it over the limit.
         # link = f'https://www.ncbi.nlm.nih.gov/protein/'
         name = gene['name']
-        color = levels.get(name, 0) or levels.get(gene['protein_accessio'], 0)
+        color = levels.get(name, 0) or levels.get(gene['protein_accession'], 0)
         image = f'c{color}.png'
         return f'| ![alt text](img/{image} "{name}") '
 
