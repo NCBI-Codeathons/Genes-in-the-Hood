@@ -200,8 +200,6 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 
 
 
-
-
 ### Neighborhood analysis
 
 - 10 genes on either side of cas9
@@ -213,7 +211,6 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
    cas1 - function
    cas2 -  
    cas4 - 
-   
 - @@@@ any other genes common to the neighboorhood? @@@@
 
 
@@ -242,19 +239,14 @@ For each downloaded assembly, we used ORFfinder to translate all the ORFs (>=100
 #### Output for the user
 
 - FASTA file of cas9 proteins (WP accessions)
-
 - html table with results of hmmsearch
-
 - table of gene neighboorhood
-
 - Heat map of the gene neighboorhood
-
 
 
 #### Feedback for the Datasets team
 
 - issues with downloading assemblies
-
 - users are interested in GO (Gene Ontology) annotation
 
 
