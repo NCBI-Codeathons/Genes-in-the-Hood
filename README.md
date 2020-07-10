@@ -61,7 +61,7 @@ How many of the neighborhoods are unique? Can they be classified and made non-re
 
 
 ### (B) Use cas9 protein/HMM profile sequence to look for similar proteins but without the cas9 symbol
-(i) tblastn using cas9 HMM profiles (TIGR03031 and TIGR01865)
+(i) rpstblastn using cas9 HMM profiles (TIGR03031 and TIGR01865)
 
 * build nucleotide blast database with genomic sequences from all assemblies in g-proteobacteria
 
@@ -176,6 +176,8 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 #### ORFfinder/hmmsearch
 
 @@@@ ADD COMMANDS here @@@@
+
+`$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
 * TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
 * TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
