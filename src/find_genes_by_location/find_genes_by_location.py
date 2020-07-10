@@ -1,10 +1,11 @@
 import argparse
-from collections import Counter, defaultdict
+from collections import defaultdict
+import csv
 from dataclasses import dataclass, field
 from enum import Enum, unique, auto
 import os
+import sys
 import tempfile
-from typing import List
 import yaml
 import zipfile
 
@@ -67,14 +68,14 @@ class Gene:
     range_stop: int
     protein_accession: str = ""
 
-    def __str__(self):
-        return f'{self.chrom}\t{self.feat_type}\t{self.name}\t{self.range_start}\t{self.range_stop}\t{self.protein_accession}'
+    def get_fields(self):
+        return [self.chrom, self.feat_type, self.name, self.range_start, self.range_stop, self.protein_accession]
 
     def name_val(self):
         return self.protein_accession if self.protein_accession else self.name
 
 
-def find_genes_by_loc(gff3_db, seq_acc, start, stop):
+def find_genes_by_loc(gff3_db, csvout, assm_acc, seq_acc, start, stop, extra_fields):
     found_genes = []
     feat_types = ('gene', 'pseudogene')
     for gene in gff3_db.region(seqid=seq_acc, start=start, end=stop, featuretype=feat_types, completely_within=False):
@@ -93,7 +94,7 @@ def find_genes_by_loc(gff3_db, seq_acc, start, stop):
             gene.stop,
             prot_acc,
         )
-        print(seq_acc, start, stop, geneobj)
+        csvout.writerow([assm_acc, seq_acc, start, stop, *extra_fields, *geneobj.get_fields()])
         found_genes.append(geneobj)
     return found_genes
 
@@ -107,16 +108,17 @@ class FindGenesByLoc:
                             help=f'root of input data directory [{self.default_packages_dir}]')
         parser.add_argument('--locs', type=str, help='file containing genomic locations')
         self.args = parser.parse_args()
+        self.writer = csv.writer(sys.stdout)
+
+    def read_data(self):
+        for row in csv.reader(iter(sys.stdin.readline, ''), dialect='excel-tab'):
+            yield row
 
     def run(self):
-        testdata = [
-            ('GCF_900454785.1', 'NZ_UGST01000002.1', 30401, 33577),
-            ('GCF_900491815.1', 'NZ_UFAF01000052.1', 8372, 10831),
-        ]
-        for assm_acc, seq_acc, start, stop in testdata:
-            self.find_all_for_location(assm_acc, seq_acc, start, stop)
+        for assm_acc, seq_acc, start, stop, *extra in self.read_data():
+            self.find_all_for_location(assm_acc, seq_acc, start, stop, extra)
 
-    def process_loc_for_gff(self, zin, gff_fname, assm_acc, seq_acc, start, stop):
+    def process_loc_for_gff(self, zin, gff_fname, assm_acc, seq_acc, start, stop, extra_fields):
         with tempfile.NamedTemporaryFile() as tmpfile:
             tmpfile.write(zin.read(gff_fname))
             db = gffutils.create_db(
@@ -127,9 +129,9 @@ class FindGenesByLoc:
                 merge_strategy='merge',
                 sort_attribute_values=True
             )
-            find_genes_by_loc(db, seq_acc, start, stop)
+            find_genes_by_loc(db, self.writer, assm_acc, seq_acc, start, stop, extra_fields)
 
-    def find_all_for_location(self, assm_acc, seq_acc, start, stop):
+    def find_all_for_location(self, assm_acc, seq_acc, start, stop, extra_fields):
         zip_file = get_zip_file_for_acc(assm_acc, self.args.packages_dir)
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
@@ -138,7 +140,7 @@ class FindGenesByLoc:
                 for assm_acc, gff_files in gff_files.items():
                     report = retrieve_assembly_report(zin, catalog, assm_acc)
                     for gff_fname in gff_files:
-                        self.process_loc_for_gff(zin, gff_fname, assm_acc, seq_acc, start, stop)
+                        self.process_loc_for_gff(zin, gff_fname, assm_acc, seq_acc, start, stop, extra_fields)
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
 
