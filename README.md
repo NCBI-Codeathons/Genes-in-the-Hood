@@ -122,11 +122,11 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
   
   where:
 
-   `-g 11` = The Bacterial, Archaeal and Plant Plastid Code
+   `-g 11` &mdash; The Bacterial, Archaeal and Plant Plastid Code
    
-   `-s 0`  = use ATG only for the ORF start codon
+   `-s 0`  &mdash; use ATG only for the ORF start codon
    
-   `-n t`  = Ignore nested ORFs (completely placed within another)
+   `-n t`  &mdash; Ignore nested ORFs (completely placed within another)
 
 * retrieve the TIGRFAM HMM profiles associated with `cas9` from [NCBI FTP](https://ftp.ncbi.nlm.nih.gov/hmm/current/).
   * [TIGR03031](https://ftp.ncbi.nlm.nih.gov/hmm/current/hmm_PGAP.HMM/TIGR03031.1.HMM) &mdash; type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
