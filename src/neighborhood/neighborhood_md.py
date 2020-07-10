@@ -39,7 +39,7 @@ class ThisApp:
 
     def column_levels(self, data):
         def color(value):
-            return 10 if value == 1.0 else max(int(10 * value), 9)
+            return 10 if value == 1.0 else min(int(30 * value), 9)
 
         columns = data['freqs']['columns']
         levels = []
