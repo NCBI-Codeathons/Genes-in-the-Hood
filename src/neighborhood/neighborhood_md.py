@@ -71,6 +71,8 @@ class ThisApp:
         # GitHub won't show an md file if it is too big.  Adding the link puts it over the limit.
         # link = f'https://www.ncbi.nlm.nih.gov/protein/'
         name = gene['name']
+        if '_' in name:
+            name = gene['protein_accession']
         color = levels[column].get(name, 0) or levels[column].get(gene['protein_accession'], 0)
         image = f'c{color}.png'
         return f'| ![alt text](img/{image} "{name}") '
