@@ -178,6 +178,8 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 - genomic sequence -> ORFfinder -> ORF protein fasta  
    cutoff: 100 aa  
    limited to ATG start codon
+   
+   `$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
 - alignment of HMM profile to proteins   
    hmmsearch <hmmlist>  <ORF protein fasta>  
