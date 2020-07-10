@@ -8,6 +8,7 @@ import os
 import re
 import tempfile
 from typing import List
+import yaml
 import zipfile
 
 import gffutils
@@ -18,15 +19,12 @@ from ncbi.datasets.v1alpha1.reports import assembly_pb2
 from ncbi.datasets.reports.report_reader import DatasetsReportReader
 
 
-def retrieve_assembly_report(zip_in, catalog) -> assembly_pb2.AssemblyDataReport:
-    report_files = get_files(catalog, dataset_catalog_pb2.File.FileType.DATA_REPORT)
-    if not report_files:
-        return None
-    for assm_acc, files in report_files.items():
-        for fname in files:
-            yaml = zip_in.read(fname)
-            rpt_rdr = DatasetsReportReader()
-            return rpt_rdr.assembly_report(yaml)
+def retrieve_assembly_report(zip_in, catalog, assm_acc: str) -> assembly_pb2.AssemblyDataReport:
+    report_files = get_catalog_files_for_assembly(catalog, dataset_catalog_pb2.File.FileType.DATA_REPORT, assm_acc)
+    for path in report_files:
+        yaml = zip_in.read(path)
+        rpt_rdr = DatasetsReportReader()
+        return rpt_rdr.assembly_report(yaml)
 
 
 def retrieve_data_catalog(zip_in) -> dataset_catalog_pb2.Catalog:
@@ -34,10 +32,20 @@ def retrieve_data_catalog(zip_in) -> dataset_catalog_pb2.Catalog:
     return json_format.Parse(catalog_json, dataset_catalog_pb2.Catalog())
 
 
-def get_files(data_catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType):
+def get_catalog_files_for_assembly(catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType, assm_acc: str):
+    report_files = get_catalog_files(catalog, desired_filetype, assm_acc)
+    filepaths = []
+    for assm_acc, paths in report_files.items():
+        filepaths.extend(paths)
+    return filepaths
+
+
+def get_catalog_files(catalog: dataset_catalog_pb2.Catalog, desired_filetype: dataset_catalog_pb2.File.FileType, assm_acc: str = None):
     files = defaultdict(list)
-    for assm in data_catalog.assemblies:
+    for assm in catalog.assemblies:
         acc = assm.accession
+        if assm_acc and assm_acc != acc:
+            continue
         for f in assm.files:
             filepath = os.path.join('ncbi_dataset', 'data', f.file_path)
             if f.file_type == desired_filetype:
@@ -112,6 +120,7 @@ class Assembly:
     tax_id: int = 0
 
 
+
 @dataclass
 class Neighbors:
     gene: Gene
@@ -129,9 +138,6 @@ class Neighbors:
 
     def get_neighborhood(self, upstream_count=10, downstream_count=10):
         return self._get_table(upstream_count, downstream_count)
-
-    def to_text(self):
-        return f'{self.assm} -- {self.get_neighborhood()}\n'
 
 
 class NeighborhoodFreqs:
@@ -152,6 +158,12 @@ class NeighborhoodFreqs:
         return self.all_freqs.get_relative_freqs(topn)
 
 
+@dataclass
+class FreqValue:
+    term: str
+    count: int
+
+
 class Freqs(Counter):
     def add_term(self, term):
         if term:
@@ -159,7 +171,13 @@ class Freqs(Counter):
 
     def get_relative_freqs(self, topn=10):
         total_count = sum(self.values())
-        return [(t, count / total_count) for t, count in self.most_common(topn)]
+        return [FreqValue(t, count / total_count) for t, count in self.most_common(topn)]
+
+
+@dataclass
+class NeighborhoodReport:
+    neighbors: List[Neighbors] = field(default_factory=list)
+    freqs: NeighborhoodFreqs = field(default_factory=NeighborhoodFreqs)
 
 
 def extract_genes(gff3_db, desired_gene):
@@ -233,6 +251,76 @@ def col9_attributes(col_9):
 
 
 
+def setup_yaml():
+    def assembly_repr(dumper, assm):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [('taxid', assm.tax_id), ('assm', assm.assm_acc)]
+        )
+
+    def neighbors_repr(dumper, neighbors):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('assm', neighbors.assm),
+                ('gene', neighbors.gene),
+                ('upstream', neighbors.upstream),
+                ('downstream', neighbors.downstream),
+            ]
+        )
+
+    def gene_repr(dumper, gene):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('name', gene.name),
+                ('protein_accession', gene.protein_accession),
+                ('feat_type', gene.feat_type),
+                ('chrom', gene.chrom),
+                ('range_start', gene.range_start),
+                ('range_stop', gene.range_stop),
+                ('strand', gene.strand),
+            ],
+            flow_style=True
+        )
+
+    def neighborhood_report_repr(dumper, rpt):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('neighbors', rpt.neighbors),
+                ('freqs', rpt.freqs),
+            ]
+        )
+
+    def neighborhood_freqs_repr(dumper, nfreqs):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('global', nfreqs.get_global_freqs()),
+                ('columns', nfreqs.get_freq_table()),
+            ]
+        )
+
+    def freq_value_repr(dumper, f):
+        return dumper.represent_mapping(
+            yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+            [
+                ('term', f.term),
+                ('freq', f.count),
+            ],
+            flow_style=True
+        )
+
+    # yaml.add_representer(OrderedDict, represent_dictionary_order)
+    yaml.add_representer(NeighborhoodReport, neighborhood_report_repr)
+    yaml.add_representer(NeighborhoodFreqs, neighborhood_freqs_repr)
+    yaml.add_representer(FreqValue, freq_value_repr)
+    yaml.add_representer(Assembly, assembly_repr)
+    yaml.add_representer(Neighbors, neighbors_repr)
+    yaml.add_representer(Gene, gene_repr)
+
+
 class ThisApp:
     default_input_accfile_path = '/usr/local/data/cas9_gene.gcf'
     default_input_path = os.path.join('var', 'data', 'packages')
@@ -255,7 +343,9 @@ class ThisApp:
         parser.add_argument('-A', '--accession-file', type=str, default=self.default_input_accfile_path,
                             help='file of accessions - limit the analysis to these accessions')
         self.args = parser.parse_args()
-        self.freqs = NeighborhoodFreqs()
+        self.neighbor_report = NeighborhoodReport()
+        self.freqs = self.neighbor_report.freqs
+        setup_yaml()
 
     def run(self):
         zip_files = get_zip_files(self.args.accession_file, self.args.input_path)
@@ -265,9 +355,9 @@ class ThisApp:
         try:
             with zipfile.ZipFile(zip_file, 'r') as zin:
                 catalog = retrieve_data_catalog(zin)
-                report = retrieve_assembly_report(zin, catalog)
-                gff_files = get_files(catalog, dataset_catalog_pb2.File.FileType.GFF3)
+                gff_files = get_catalog_files(catalog, dataset_catalog_pb2.File.FileType.GFF3)
                 for assm_acc, gff_files in gff_files.items():
+                    report = retrieve_assembly_report(zin, catalog, assm_acc)
                     print(f'processing assembly {assm_acc} for {report.species_name} {report.strain}')
                     for fname in gff_files:
                         with tempfile.NamedTemporaryFile() as tmpfile:
@@ -285,7 +375,7 @@ class ThisApp:
                             found_gene.assm.tax_id = report.tax_id
                             self.freqs.add_terms(found_gene.get_neighborhood())
                             fout1.write(str(found_gene.gene))
-                            fout2.write(found_gene.to_text())
+                            self.neighbor_report.neighbors.append(found_gene)
                             # seq, pos1, pos2, gene_type = find_gene(gene, gff_lines)
         except zipfile.BadZipFile:
             print(f'{zip_file} is not a zip file')
@@ -299,8 +389,9 @@ class ThisApp:
         report_file_1 = os.path.join(self.args.output_path, f'assembly_{gene}_report.txt')
         report_file_2 = os.path.join(self.args.output_path, f'neighborhood_{gene}_report.txt')
         with open(report_file_1, 'w') as fout1, open(report_file_2, 'w') as fout2:
-            for zip_file in zip_files[:4]:
+            for zip_file in zip_files:
                 self.process_zip_file(zip_file, gene, fout1, fout2)
+            fout2.write(yaml.dump(self.neighbor_report))
         pp = PrettyPrinter()
         pp.pprint(self.freqs.get_freq_table())
         pp.pprint(self.freqs.get_global_freqs())
