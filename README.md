@@ -141,9 +141,8 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 
 ### Neighborhood analysis
 
-Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
-
-- Cas proteins `cas1`, `cas2` and `cas4` are clustered with `cas9`
+Extract and present 10 genes on either side of cas9. Identify patterns, if any. For example, Cas proteins `cas1`, `cas2` and `cas4` are often found
+clustered with `cas9`
    * `cas1` &mdash; endonuclease
    * `cas2` &mdash; spacer acquistion in CRISPR array 
    * `cas4` &mdash; exonuclease; capture of new viral DNA sequences  
