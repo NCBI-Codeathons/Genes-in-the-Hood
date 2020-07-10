@@ -175,10 +175,10 @@ Retrieve the neighborhood of 10 genes/proteins on either side of `cas9`
 
 #### Output for the user
 
-- FASTA file of cas9 proteins (WP accessions)
 - html table with results of `hmmsearch`
 - table of gene neighboorhood
-- Heat map of the gene neighboorhood
+- heat map of the gene neighboorhood
+- _pending_: FASTA file of `cas9` proteins (WP accessions)
 
 
 #### Feedback for the Datasets team
