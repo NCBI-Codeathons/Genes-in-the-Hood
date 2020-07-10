@@ -176,7 +176,8 @@ In addition, we found two cases which could not be downloaded as fully hydrated 
 #### ORFfinder/hmmsearch
 
 @@@@ ADD COMMANDS here @@@@
-`$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0 -out orf.10.test.out`
+
+`$ ORFfinder -in *genomic.fna -g 11 -s 0 -ml 300 -n t -outfmt 0`
 
 * TIGR03031 - type II-B CRISPR-associated RNA-guided endonuclease Cas9/Csx12
 * TIGR01865 - type II CRISPR RNA-guided endonuclease Cas9
