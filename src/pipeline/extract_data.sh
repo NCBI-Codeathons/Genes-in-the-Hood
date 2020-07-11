@@ -74,7 +74,7 @@ fi
 
 if [ ! -z "$gff_files" ]; then
     have_genes=`awk 'BEGIN {OFS="\t"} /^[^#]/ {split($1, a, "ORF[0-9]*_"); location=a[1]; split(a[2], b, ":"); if ($5 <= 10E-20) {print assmacc, b[1], b[2], b[3], $1, $4, $5, $6, $7}}' assmacc=$accession $output_dir/hmmsearch.out | 
-        python ../find_genes_by_location/find_genes_by_location.py  --packages-dir $source_dir  | tr ',' '\t'`
+        python ../find_genes_by_location/find_genes_by_location.py  --packages-dir $source_dir`
 fi
 
 if [ -z "$have_genes" ]; then
