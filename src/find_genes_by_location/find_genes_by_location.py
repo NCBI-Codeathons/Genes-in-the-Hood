@@ -108,7 +108,7 @@ class FindGenesByLoc:
                             help=f'root of input data directory [{self.default_packages_dir}]')
         parser.add_argument('--locs', type=str, help='file containing genomic locations')
         self.args = parser.parse_args()
-        self.writer = csv.writer(sys.stdout)
+        self.writer = csv.writer(sys.stdout, dialect='excel-tab')
 
     def read_data(self):
         for row in csv.reader(iter(sys.stdin.readline, ''), dialect='excel-tab'):
